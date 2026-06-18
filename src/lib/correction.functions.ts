@@ -2,11 +2,13 @@
 // To swap providers (e.g., Vercel + OpenAI), change ONLY this file.
 
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 import { EN_CATEGORIES, KO_CATEGORIES } from "./categories";
 import type { CorrectionResult } from "./types";
+
 
 const InputSchema = z.object({ text: z.string().min(1).max(8000) });
 
@@ -75,11 +77,43 @@ function stripFences(s: string): string {
     .trim();
 }
 
+// Lightweight in-memory per-IP rate limiter to mitigate abuse of the
+// unauthenticated AI endpoint. Limits each IP to RATE_LIMIT_MAX requests
+// per RATE_LIMIT_WINDOW_MS. State is per worker isolate (best-effort).
+const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const rateLimitBuckets = new Map<string, { count: number; resetAt: number }>();
+
+function getClientIp(req: Request): string {
+  const fwd = req.headers.get("cf-connecting-ip")
+    ?? req.headers.get("x-real-ip")
+    ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return fwd || "unknown";
+}
+
+function checkRateLimit(ip: string): void {
+  const now = Date.now();
+  const bucket = rateLimitBuckets.get(ip);
+  if (!bucket || bucket.resetAt < now) {
+    rateLimitBuckets.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return;
+  }
+  if (bucket.count >= RATE_LIMIT_MAX) {
+    throw new Response("Too Many Requests", { status: 429 });
+  }
+  bucket.count += 1;
+}
+
 export const correctEntry = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<CorrectionResult> => {
+    const req = getRequest();
+    if (req) checkRateLimit(getClientIp(req));
+
+
     const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    if (!key) throw new Error("AI service unavailable");
+
 
     const gateway = createLovableAiGatewayProvider(key);
     const { text } = await generateText({
