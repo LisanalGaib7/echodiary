@@ -2,7 +2,7 @@
 // To swap providers (e.g., Vercel + OpenAI), change ONLY this file.
 
 import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
@@ -107,8 +107,9 @@ function checkRateLimit(ip: string): void {
 export const correctEntry = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<CorrectionResult> => {
-    const req = getWebRequest();
+    const req = getRequest();
     if (req) checkRateLimit(getClientIp(req));
+
 
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("AI service unavailable");
