@@ -1,51 +1,72 @@
-import { useEffect, useState } from "react";
+import { Fragment, useLayoutEffect, useMemo, useState } from "react";
 
 const SESSION_KEY = "echo:tagline-played";
-const TOTAL_MS = 2000;
+
+const STAGGER = 90;
+const PERIOD_PAUSE = 200;
+const WORD_DURATION = 800;
 
 export function TypewriterTagline({ text, className }: { text: string; className?: string }) {
-  const reducedMotion =
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const alreadyPlayed =
-    typeof window !== "undefined" && sessionStorage.getItem(SESSION_KEY) === "1";
-  const skip = reducedMotion || alreadyPlayed;
+  const [shown, setShown] = useState(false);
+  const [instant, setInstant] = useState(false);
 
-  const [count, setCount] = useState(skip ? text.length : 0);
-  const [phase, setPhase] = useState<"typing" | "blinking" | "done">(
-    skip ? "done" : "typing",
-  );
+  const words = useMemo(() => text.split(" "), [text]);
 
-  useEffect(() => {
-    if (skip) return;
-    const perChar = TOTAL_MS / text.length;
-    let i = 0;
-    const typer = window.setInterval(() => {
-      i += 1;
-      setCount(i);
-      if (i >= text.length) {
-        window.clearInterval(typer);
-        setPhase("blinking");
-        // ~3.5 blinks at 500ms cycle = ~1750ms
-        window.setTimeout(() => {
-          setPhase("done");
-          sessionStorage.setItem(SESSION_KEY, "1");
-        }, 1750);
-      }
-    }, perChar);
-    return () => window.clearInterval(typer);
-  }, [text, skip]);
+  const { delays, total } = useMemo(() => {
+    const d: number[] = [];
+    let acc = 0;
+    for (const w of words) {
+      d.push(acc);
+      acc += STAGGER;
+      if (/[.]$/.test(w)) acc += PERIOD_PAUSE;
+    }
+    return { delays: d, total: acc + WORD_DURATION };
+  }, [words]);
+
+  useLayoutEffect(() => {
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const alreadyPlayed = sessionStorage.getItem(SESSION_KEY) === "1";
+    const skip = Boolean(reducedMotion || alreadyPlayed);
+
+    if (skip) {
+      setInstant(true);
+      setShown(true);
+      return;
+    }
+
+    const raf = requestAnimationFrame(() => setShown(true));
+    const done = window.setTimeout(() => {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    }, total + 50);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(done);
+    };
+  }, [total]);
 
   return (
     <span className={className} aria-label={text}>
-      <span aria-hidden={phase !== "done"}>{text.slice(0, count)}</span>
-      {phase !== "done" && (
-        <span
-          className="ml-0.5 inline-block w-[1px] animate-caret-blink bg-current align-baseline"
-          style={{ height: "0.9em" }}
-          aria-hidden="true"
-        />
-      )}
+      {words.map((word, i) => (
+        <Fragment key={i}>
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-block",
+              opacity: shown ? 1 : 0,
+              filter: shown ? "blur(0px)" : "blur(6px)",
+              transform: shown ? "translateY(0)" : "translateY(14px)",
+              transition: instant
+                ? "none"
+                : `opacity ${WORD_DURATION}ms ease, transform ${WORD_DURATION}ms cubic-bezier(.2,.7,.2,1), filter ${WORD_DURATION}ms ease`,
+              transitionDelay: `${delays[i]}ms`,
+              willChange: "opacity, transform, filter",
+            }}
+          >
+            {word}
+          </span>
+          {i < words.length - 1 ? " " : ""}
+        </Fragment>
+      ))}
     </span>
   );
 }
