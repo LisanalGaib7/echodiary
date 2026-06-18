@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { UiLangProvider, useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
+import { TypewriterTagline } from "@/components/TypewriterTagline";
 
 function NotFoundComponent() {
   return (
