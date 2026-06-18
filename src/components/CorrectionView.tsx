@@ -57,7 +57,7 @@ export function CorrectionView({ result, lang }: { result: CorrectionResult; lan
               <tbody>
                 {result.changes.map((c, i) => (
                   <tr key={i} className="border-t border-border align-top">
-                    <td className="px-4 py-3"><span className="rounded bg-destructive/10 px-1.5 py-0.5 text-destructive line-through">{c.original}</span></td>
+                    <td className="px-4 py-3"><span className="rounded bg-destructive/10 px-1.5 py-0.5 text-destructive">{c.original}</span></td>
                     <td className="px-4 py-3"><span className="rounded bg-success/10 px-1.5 py-0.5 text-success">{c.refined}</span></td>
                     <td className="px-4 py-3 text-muted-foreground">{c.reason}</td>
                     <td className="px-4 py-3">
