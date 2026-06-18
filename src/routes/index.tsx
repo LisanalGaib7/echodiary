@@ -63,7 +63,7 @@ function WritePage() {
       <Toaster position="top-center" />
       <div>
         <h1 className="font-serif text-4xl font-semibold tracking-tight">{t("tagline", uiLang)}</h1>
-        <p className="mt-2 text-muted-foreground">Echo · {new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+        <p className="mt-2 text-xs text-muted-foreground">{new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
       </div>
 
       <div className="journal-card p-2">
