@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { UiLangProvider, useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
+import { TypewriterTagline } from "@/components/TypewriterTagline";
 
 function NotFoundComponent() {
   return (
@@ -79,7 +80,7 @@ function Nav() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-baseline gap-2">
           <span className="font-serif text-2xl font-semibold tracking-tight text-primary">Echo</span>
-          <span className="hidden text-xs text-muted-foreground sm:inline">{t("tagline", uiLang)}</span>
+          <TypewriterTagline text={t("tagline", uiLang)} className="hidden text-xs text-muted-foreground sm:inline" />
         </Link>
         <nav className="flex items-center gap-1">
           <Link to="/" activeOptions={{ exact: true }} className={linkCls} activeProps={{ className: `${linkCls} ${activeCls}` }}>{t("navWrite", uiLang)}</Link>
