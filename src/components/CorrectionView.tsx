@@ -14,7 +14,7 @@ function SubScore({ label, value }: { label: string; value: number }) {
     <div>
       <div className="mb-1 flex items-baseline justify-between text-xs">
         <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono font-medium">{value.toFixed(1)}</span>
+        <span className="score-text text-sm font-medium text-primary">{value.toFixed(1)}</span>
       </div>
       <div className="h-1.5 overflow-hidden rounded-full bg-muted">
         <div className="h-full rounded-full bg-primary" style={{ width: `${(value / 10) * 100}%` }} />
@@ -61,7 +61,7 @@ export function CorrectionView({ result, lang }: { result: CorrectionResult; lan
                     <td className="px-4 py-3"><span className="rounded bg-success/10 px-1.5 py-0.5 text-success">{c.refined}</span></td>
                     <td className="px-4 py-3 text-muted-foreground">{c.reason}</td>
                     <td className="px-4 py-3">
-                      <span className="inline-block rounded-full border border-border bg-secondary px-2 py-0.5 text-xs">
+                      <span className="category-pill bg-secondary text-secondary-foreground border border-border">
                         {categoryLabel(lang, c.category, uiLang)}
                       </span>
                     </td>
@@ -77,8 +77,8 @@ export function CorrectionView({ result, lang }: { result: CorrectionResult; lan
       <section className="journal-card p-6">
         <div className="flex flex-wrap items-start gap-6">
           <div className="flex items-baseline gap-2">
-            <span className={`font-serif text-6xl font-semibold ${scoreColor(o.score)}`}>{o.score.toFixed(1)}</span>
-            <span className="text-lg text-muted-foreground">/ 10</span>
+            <span className={`score-text text-6xl font-semibold tabular-nums ${scoreColor(o.score)}`}>{o.score.toFixed(1)}</span>
+            <span className="score-text text-lg text-muted-foreground">/ 10</span>
           </div>
           <div className="flex-1 min-w-[240px] grid grid-cols-2 gap-3">
             <SubScore label={t("accuracy", uiLang)} value={o.subScores.accuracy} />

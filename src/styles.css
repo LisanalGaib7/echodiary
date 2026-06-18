@@ -118,3 +118,23 @@
   border-radius: var(--radius-xl);
   box-shadow: 0 1px 0 oklch(0 0 0 / 0.02), 0 8px 24px -16px oklch(0 0 0 / 0.12);
 }
+
+@utility category-pill {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  min-height: 28px;
+  padding-inline: 12px;
+  padding-block: 4px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-variant-caps: small-caps;
+  line-height: 1;
+}
+
+@utility score-text {
+  font-family: var(--font-serif);
+  font-variant-numeric: tabular-nums;
+}
