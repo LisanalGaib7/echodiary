@@ -6,6 +6,7 @@ import { correctEntry } from "@/lib/correction.functions";
 import { saveEntry } from "@/lib/db";
 import type { Entry, CorrectionResult } from "@/lib/types";
 import { CorrectionView } from "@/components/CorrectionView";
+import { TypewriterTagline } from "@/components/TypewriterTagline";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 
@@ -62,7 +63,7 @@ function WritePage() {
     <div className="space-y-8">
       <Toaster position="top-center" />
       <div>
-        <h1 className="font-serif text-4xl font-semibold tracking-tight">{t("tagline", uiLang)}</h1>
+        <h1 className="font-serif text-4xl font-semibold tracking-tight"><TypewriterTagline text={t("tagline", uiLang)} /></h1>
         <p className="mt-2 text-xs text-muted-foreground">{new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
       </div>
 
