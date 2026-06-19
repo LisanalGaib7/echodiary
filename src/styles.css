@@ -102,6 +102,14 @@
   * { border-color: var(--color-border); }
   body {
     background-color: var(--color-background);
+    background-image:
+      radial-gradient(
+        ellipse 100% 80% at 50% 0%,
+        oklch(from var(--paper) calc(l + 0.015) c h) 0%,
+        var(--paper) 45%,
+        oklch(from var(--paper) calc(l - 0.04) c h) 100%
+      );
+    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
@@ -110,14 +118,46 @@
     font-family: var(--font-serif);
     letter-spacing: -0.015em;
   }
+
+  /* Atmosphere: film grain + vignette, fixed, behind content */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::before {
+    /* film grain */
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+  .dark body::before { mix-blend-mode: overlay; opacity: 0.05; }
+  body::after {
+    /* vignette */
+    background: radial-gradient(
+      ellipse 90% 75% at 50% 50%,
+      transparent 55%,
+      oklch(from var(--paper) calc(l - 0.12) c h / 0.35) 100%
+    );
+  }
+
+  /* Keep app content above atmosphere layers */
+  body > * { position: relative; z-index: 1; }
 }
 
 @utility journal-card {
   background-color: var(--color-card);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: 0 1px 0 oklch(0 0 0 / 0.02), 0 8px 24px -16px oklch(0 0 0 / 0.12);
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    0 1px 0 oklch(0 0 0 / 0.02),
+    0 30px 80px -40px oklch(from var(--primary) l c h / 0.18),
+    0 12px 40px -20px oklch(from var(--primary) l c h / 0.10);
 }
+
 
 @utility category-pill {
   display: inline-flex;
