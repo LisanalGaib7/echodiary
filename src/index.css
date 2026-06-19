@@ -1,4 +1,4 @@
-/* index.css — global scrollbars */
+/* src/index.css — global scrollbars (warm editorial theme) */
 
 /* WebKit: Chrome, Edge, Safari */
 
@@ -7,23 +7,18 @@
 *::-webkit-scrollbar-track { background: transparent; }
 
 *::-webkit-scrollbar-thumb {
-
-  background: rgba(122, 46, 38, 0.25);   /* maroon, faint */
-
+  background: oklch(from var(--primary) l c h / 0.25);   /* maroon, faint */
   border-radius: 9999px;
-
-  border: 3px solid transparent;          /* inset padding -> thinner, softer */
-
+  border: 3px solid transparent;             /* inset padding -> thinner, softer */
   background-clip: padding-box;
-
 }
 
-*::-webkit-scrollbar-thumb:hover { background: rgba(122, 46, 38, 0.45); }
+*::-webkit-scrollbar-thumb:hover { background: oklch(from var(--primary) l c h / 0.45); }
 
-*::-webkit-scrollbar-button { display: none; width: 0; height: 0; }  /* kill the ▲▼ arrows */
+*::-webkit-scrollbar-button { display: none; width: 0; height: 0; }  /* kill ▲▼ arrows */
 
 *::-webkit-scrollbar-corner { background: transparent; }
 
 /* Firefox */
 
-* { scrollbar-width: thin; scrollbar-color: rgba(122, 46, 38, 0.35) transparent; }
+* { scrollbar-width: thin; scrollbar-color: oklch(from var(--primary) l c h / 0.35) transparent; }
