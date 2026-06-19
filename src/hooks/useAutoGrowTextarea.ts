@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
 export function useAutoGrowTextarea(value: string) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
@@ -7,11 +7,15 @@ export function useAutoGrowTextarea(value: string) {
     const el = ref.current;
     if (!el) return;
 
-    el.style.height = "auto";
+    // Collapse to 0 first so scrollHeight reflects the real content height,
+    // then expand to fit. Using 0 instead of "auto" avoids getting stuck at
+    // the textarea's rows/min-height.
+    el.style.height = "0";
     el.style.height = `${el.scrollHeight}px`;
   }, []);
 
-  useEffect(() => {
+  // Resize before paint so users never see a collapsed frame.
+  useLayoutEffect(() => {
     resize();
   }, [value, resize]);
 
