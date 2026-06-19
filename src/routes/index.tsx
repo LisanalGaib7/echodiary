@@ -9,6 +9,7 @@ import { CorrectionView } from "@/components/CorrectionView";
 import { TypewriterTagline } from "@/components/TypewriterTagline";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
+import { useAutoGrowTextarea } from "@/hooks/useAutoGrowTextarea";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,6 +29,7 @@ function WritePage() {
   const { uiLang } = useUiLang();
   const correct = useServerFn(correctEntry);
   const [text, setText] = useState("");
+  const textareaRef = useAutoGrowTextarea(text);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CorrectionResult | null>(null);
 
@@ -69,11 +71,12 @@ function WritePage() {
 
       <div className="journal-card p-2">
         <textarea
+          ref={textareaRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={t("writePlaceholder", uiLang)}
-          rows={10}
-          className="w-full resize-none rounded-lg bg-transparent p-5 font-serif text-lg leading-relaxed text-ink outline-none placeholder:text-muted-foreground/60"
+          rows={6}
+          className="w-full resize-none overflow-hidden rounded-lg bg-transparent p-5 font-serif text-lg leading-relaxed text-ink outline-none placeholder:text-muted-foreground/60 min-h-[12rem]"
         />
         <div className="flex items-center justify-between px-3 pb-2">
           <span className="text-xs text-muted-foreground">{text.length} chars</span>
