@@ -65,7 +65,7 @@ function WritePage() {
     <div className="space-y-8">
       <Toaster position="top-center" />
       <div>
-        <h1 className="font-serif text-4xl font-semibold tracking-tight"><TypewriterTagline text={t("tagline", uiLang)} /></h1>
+        <h1 className="font-display text-4xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-5xl"><TypewriterTagline text={t("tagline", uiLang)} /></h1>
         <p className="mt-2 text-xs text-muted-foreground">{new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
       </div>
 
@@ -76,7 +76,7 @@ function WritePage() {
           onChange={(e) => setText(e.target.value)}
           placeholder={t("writePlaceholder", uiLang)}
           rows={6}
-          className="w-full resize-none overflow-hidden rounded-lg bg-transparent p-5 font-serif text-lg leading-relaxed text-ink outline-none placeholder:text-muted-foreground/60 min-h-[12rem]"
+          className="w-full resize-none overflow-hidden rounded-lg bg-transparent p-5 font-sans text-lg leading-relaxed text-ink outline-none placeholder:text-muted-foreground/60 min-h-[12rem]"
         />
         <div className="flex items-center justify-between px-3 pb-2">
           <span className="text-xs text-muted-foreground">{text.length} chars</span>
