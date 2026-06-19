@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import scrollbarCss from "../index.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { UiLangProvider, useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
