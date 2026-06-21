@@ -105,10 +105,10 @@
     background-color: var(--color-background);
     background-image:
       radial-gradient(
-        ellipse 110% 90% at 50% 0%,
-        oklch(from var(--paper) calc(l + 0.02) c h) 0%,
-        var(--paper) 38%,
-        oklch(from var(--paper) calc(l - 0.08) c h) 100%
+        ellipse 100% 80% at 50% 0%,
+        oklch(from var(--paper) calc(l + 0.015) c h) 0%,
+        var(--paper) 45%,
+        oklch(from var(--paper) calc(l - 0.04) c h) 100%
       );
     background-attachment: fixed;
     color: var(--color-foreground);
@@ -130,17 +130,17 @@
   }
   body::before {
     /* film grain */
-    opacity: 0.08;
+    opacity: 0.04;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
     mix-blend-mode: multiply;
   }
-  .dark body::before { mix-blend-mode: overlay; opacity: 0.10; }
+  .dark body::before { mix-blend-mode: overlay; opacity: 0.05; }
   body::after {
     /* vignette */
     background: radial-gradient(
-      ellipse 92% 78% at 50% 50%,
-      transparent 45%,
-      oklch(from var(--paper) calc(l - 0.18) c h / 0.45) 100%
+      ellipse 90% 75% at 50% 50%,
+      transparent 55%,
+      oklch(from var(--paper) calc(l - 0.12) c h / 0.35) 100%
     );
   }
 
