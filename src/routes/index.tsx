@@ -76,7 +76,7 @@ function WritePage() {
           onChange={(e) => setText(e.target.value)}
           placeholder={t("writePlaceholder", uiLang)}
           rows={6}
-          className="w-full resize-none overflow-hidden rounded-lg bg-transparent p-5 font-sans text-lg leading-[1.7] text-ink outline-none [caret-color:hsl(var(--primary))] placeholder:text-muted-foreground/60 min-h-[12rem]"
+          className="w-full resize-none overflow-hidden rounded-lg bg-transparent p-5 font-sans text-lg leading-[1.7] text-ink outline-none [caret-color:var(--primary)] placeholder:text-muted-foreground/60 min-h-[12rem]"
         />
         <div className="flex items-center justify-between px-3 pb-2">
           <span className="text-xs text-muted-foreground">{text.length} chars</span>
