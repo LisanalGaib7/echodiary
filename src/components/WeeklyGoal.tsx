@@ -25,7 +25,6 @@ export function WeeklyGoal() {
     if (editing) inputRef.current?.select();
   }, [editing]);
 
-  const pct = Math.min(100, Math.round((done / Math.max(1, target)) * 100));
   const complete = done >= target;
 
   function save(n: number) {
@@ -35,90 +34,92 @@ export function WeeklyGoal() {
     setEditing(false);
   }
 
-  // Day labels for the week (Mon-Sun)
   const dayLabels =
     uiLang === "ko" ? ["월", "화", "수", "목", "금", "토", "일"] : ["M", "T", "W", "T", "F", "S", "S"];
 
   return (
-    <section className="journal-card relative overflow-hidden px-6 py-5">
-      {/* Header row */}
-      <header className="flex items-baseline justify-between">
-        <div className="flex items-baseline gap-3">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {uiLang === "ko" ? "이번 주" : "This week"}
-          </span>
-          {complete && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-[0.18em] text-primary">
-              <Check className="h-3 w-3" strokeWidth={2.5} />
-              {uiLang === "ko" ? "달성" : "Reached"}
+    <section
+      aria-label={uiLang === "ko" ? "이번 주 진행" : "This week's progress"}
+      className="px-1"
+    >
+      {/* Two-column ledger: GOAL | STREAK, separated by a hairline */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-6 sm:gap-10">
+        {/* LEFT — Goal */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              {uiLang === "ko" ? "이번 주" : "This week"}
             </span>
-          )}
+            {complete && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-[0.18em] text-primary">
+                <Check className="h-3 w-3" strokeWidth={2.5} />
+                {uiLang === "ko" ? "달성" : "Reached"}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-baseline gap-2 font-serif tabular-nums leading-none">
+            <span className="text-5xl font-medium text-foreground sm:text-6xl">{done}</span>
+            <span className="text-2xl text-muted-foreground/50 sm:text-3xl">/</span>
+            {editing ? (
+              <input
+                ref={inputRef}
+                type="number"
+                min={1}
+                max={14}
+                defaultValue={target}
+                onBlur={(e) => save(Number(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") save(Number((e.target as HTMLInputElement).value));
+                  if (e.key === "Escape") setEditing(false);
+                }}
+                className="w-[1.6em] bg-transparent text-2xl text-muted-foreground outline-none sm:text-3xl"
+                style={{ font: "inherit" }}
+              />
+            ) : (
+              <button
+                onClick={() => setEditing(true)}
+                className="group inline-flex items-baseline gap-1.5 text-2xl text-muted-foreground transition-colors hover:text-foreground sm:text-3xl"
+                title={uiLang === "ko" ? "목표 수정" : "Edit goal"}
+              >
+                <span>{target}</span>
+                <Pencil
+                  className="h-3 w-3 self-center opacity-0 transition-opacity group-hover:opacity-60"
+                  strokeWidth={2}
+                />
+              </button>
+            )}
+          </div>
         </div>
 
-        {streak > 0 && (
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Flame className="h-3.5 w-3.5 text-primary" strokeWidth={2} />
-            <span className="font-mono tabular-nums text-foreground">{streak}</span>
-            <span>
-              {uiLang === "ko" ? "일 연속" : `day${streak === 1 ? "" : "s"} streak`}
+        {/* Vertical hairline */}
+        <div className="w-px self-stretch bg-border/70" aria-hidden />
+
+        {/* RIGHT — Streak */}
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-1.5">
+            <Flame className="h-3 w-3 text-primary" strokeWidth={2.5} />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              {uiLang === "ko" ? "연속" : "Streak"}
             </span>
           </div>
-        )}
-      </header>
 
-      {/* Hero numeric — editorial focal point */}
-      <div className="mt-3 flex items-end justify-between gap-6">
-        <div className="flex items-baseline gap-2 font-serif tabular-nums leading-none">
-          <span className="text-5xl font-medium text-foreground sm:text-6xl">{done}</span>
-          <span className="text-2xl text-muted-foreground/60 sm:text-3xl">/</span>
-          {editing ? (
-            <input
-              ref={inputRef}
-              type="number"
-              min={1}
-              max={14}
-              defaultValue={target}
-              onBlur={(e) => save(Number(e.target.value))}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") save(Number((e.target as HTMLInputElement).value));
-                if (e.key === "Escape") setEditing(false);
-              }}
-              className="w-[1.6em] bg-transparent text-2xl text-foreground outline-none sm:text-3xl"
-              style={{ font: "inherit" }}
-            />
-          ) : (
-            <button
-              onClick={() => setEditing(true)}
-              className="group inline-flex items-baseline gap-1.5 text-2xl text-muted-foreground transition-colors hover:text-foreground sm:text-3xl"
-              title={uiLang === "ko" ? "목표 수정" : "Edit goal"}
-            >
-              <span>{target}</span>
-              <Pencil
-                className="h-3 w-3 self-center opacity-0 transition-opacity group-hover:opacity-60"
-                strokeWidth={2}
-              />
-            </button>
-          )}
-        </div>
-
-        <p className="pb-1 text-right text-xs leading-tight text-muted-foreground">
-          {complete ? (
-            <span className="text-foreground">
-              {uiLang === "ko" ? "이번 주 목표 완료" : "Goal complete"}
-            </span>
-          ) : (
-            <>
+          <div className="flex items-baseline gap-2 font-serif tabular-nums leading-none">
+            <span className="text-5xl font-medium text-foreground sm:text-6xl">{streak}</span>
+            <span className="pb-1 text-sm text-muted-foreground sm:text-base">
               {uiLang === "ko"
-                ? `${target - done}편 남음`
-                : `${target - done} to go`}
-            </>
-          )}
-        </p>
+                ? streak === 1
+                  ? "일"
+                  : "일"
+                : `day${streak === 1 ? "" : "s"}`}
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Segmented progress — one slot per target entry */}
+      {/* Segmented progress */}
       <div
-        className="mt-5 grid gap-1.5"
+        className="mt-6 grid gap-1.5"
         style={{ gridTemplateColumns: `repeat(${target}, minmax(0, 1fr))` }}
         role="progressbar"
         aria-valuenow={done}
@@ -130,7 +131,7 @@ export function WeeklyGoal() {
           return (
             <span
               key={i}
-              className={`h-1.5 rounded-full transition-colors duration-500 ${
+              className={`h-1 rounded-full transition-colors duration-500 ${
                 filled ? "bg-primary" : "bg-muted"
               }`}
               style={{ transitionDelay: `${i * 40}ms` }}
@@ -139,14 +140,12 @@ export function WeeklyGoal() {
         })}
       </div>
 
-      {/* Day-of-week footer reference */}
+      {/* Day labels */}
       <div className="mt-2 flex justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground/50">
         {dayLabels.map((d, i) => (
           <span key={i}>{d}</span>
         ))}
       </div>
-
-      <span className="sr-only">{pct}%</span>
     </section>
   );
 }
