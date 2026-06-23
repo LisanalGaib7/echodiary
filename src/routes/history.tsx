@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { deleteEntry, getAllEntries } from "@/lib/db";
-import type { Entry } from "@/lib/types";
+import type { Entry, Lang } from "@/lib/types";
 import { CorrectionView } from "@/components/CorrectionView";
+import { StreakHeatmap } from "@/components/StreakHeatmap";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 
@@ -16,10 +17,14 @@ export const Route = createFileRoute("/history")({
   component: HistoryPage,
 });
 
+type LangFilter = "all" | Lang;
+
 function HistoryPage() {
   const { uiLang } = useUiLang();
   const [entries, setEntries] = useState<Entry[] | null>(null);
   const [selected, setSelected] = useState<Entry | null>(null);
+  const [query, setQuery] = useState("");
+  const [langFilter, setLangFilter] = useState<LangFilter>("all");
 
   async function load() {
     setEntries(await getAllEntries());
@@ -32,6 +37,20 @@ function HistoryPage() {
     if (selected?.id === id) setSelected(null);
     await load();
   }
+
+  const filtered = useMemo(() => {
+    if (!entries) return [];
+    const q = query.trim().toLowerCase();
+    return entries.filter((e) => {
+      if (langFilter !== "all" && e.language !== langFilter) return false;
+      if (!q) return true;
+      return (
+        e.originalText.toLowerCase().includes(q) ||
+        e.refinedText.toLowerCase().includes(q) ||
+        e.date.includes(q)
+      );
+    });
+  }, [entries, query, langFilter]);
 
   if (selected) {
     return (
@@ -53,16 +72,50 @@ function HistoryPage() {
     );
   }
 
+  const langs: LangFilter[] = ["all", "en", "ko"];
+
   return (
     <div className="space-y-6">
       <h1 className="font-serif text-3xl font-semibold">{t("navHistory", uiLang)}</h1>
+
+      {entries && entries.length > 0 && (
+        <section className="journal-card p-5">
+          <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">{t("activity", uiLang)}</div>
+          <StreakHeatmap dates={entries.map((e) => e.date)} />
+        </section>
+      )}
+
+      {entries && entries.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("searchPlaceholder", uiLang)}
+            className="flex-1 min-w-[200px] rounded-md border border-border bg-transparent px-3 py-2 text-sm outline-none focus:border-primary [caret-color:var(--primary)]"
+          />
+          <div className="flex overflow-hidden rounded-md border border-border text-xs">
+            {langs.map((l) => (
+              <button
+                key={l}
+                onClick={() => setLangFilter(l)}
+                className={`px-3 py-1.5 ${langFilter === l ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+              >
+                {l === "all" ? t("allLangs", uiLang) : l.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {entries === null ? (
         <p className="text-muted-foreground">…</p>
       ) : entries.length === 0 ? (
         <div className="journal-card p-12 text-center text-muted-foreground">{t("noEntries", uiLang)}</div>
+      ) : filtered.length === 0 ? (
+        <div className="journal-card p-12 text-center text-muted-foreground">{t("noMatches", uiLang)}</div>
       ) : (
         <ul className="space-y-3">
-          {entries.map((e) => (
+          {filtered.map((e) => (
             <li key={e.id}>
               <button onClick={() => setSelected(e)} className="journal-card flex w-full items-start gap-4 p-4 text-left transition-colors hover:bg-muted/40">
                 <div className="flex flex-col items-center justify-center rounded-md bg-secondary px-3 py-2 text-center">

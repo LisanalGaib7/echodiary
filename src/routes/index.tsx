@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast, Toaster } from "sonner";
 import { correctEntry } from "@/lib/correction.functions";
@@ -7,6 +7,7 @@ import { saveEntry } from "@/lib/db";
 import type { Entry, CorrectionResult } from "@/lib/types";
 import { CorrectionView } from "@/components/CorrectionView";
 import { TypewriterTagline } from "@/components/TypewriterTagline";
+import { WeeklyGoal } from "@/components/WeeklyGoal";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { useAutoGrowTextarea } from "@/hooks/useAutoGrowTextarea";
@@ -32,6 +33,10 @@ function WritePage() {
   const textareaRef = useAutoGrowTextarea(text);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CorrectionResult | null>(null);
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }));
+  }, [uiLang]);
 
   async function onSubmit() {
     if (!text.trim()) {
@@ -66,8 +71,11 @@ function WritePage() {
       <Toaster position="top-center" />
       <div>
         <h1 className="font-display text-4xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-5xl"><TypewriterTagline text={t("tagline", uiLang)} /></h1>
-        <p className="mt-2 text-xs text-muted-foreground">{new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+        <p className="mt-2 text-xs text-muted-foreground" suppressHydrationWarning>{today || "\u00A0"}</p>
       </div>
+
+      <WeeklyGoal />
+
 
       <div className="journal-card p-2">
         <textarea
