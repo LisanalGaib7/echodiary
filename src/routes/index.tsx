@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast, Toaster } from "sonner";
 import { correctEntry } from "@/lib/correction.functions";
@@ -7,6 +7,7 @@ import { saveEntry } from "@/lib/db";
 import type { Entry, CorrectionResult } from "@/lib/types";
 import { CorrectionView } from "@/components/CorrectionView";
 import { TypewriterTagline } from "@/components/TypewriterTagline";
+import { WeeklyGoal } from "@/components/WeeklyGoal";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { useAutoGrowTextarea } from "@/hooks/useAutoGrowTextarea";

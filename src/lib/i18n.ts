@@ -45,6 +45,10 @@ export const STRINGS = {
   errorOccurred: { en: "Something went wrong. Try again.", ko: "오류가 발생했습니다. 다시 시도해주세요." },
   empty: { en: "Please write something first.", ko: "먼저 일기를 작성해주세요." },
   uiLang: { en: "UI", ko: "UI" },
+  searchPlaceholder: { en: "Search entries…", ko: "일기 검색…" },
+  allLangs: { en: "All", ko: "전체" },
+  activity: { en: "Activity", ko: "활동" },
+  noMatches: { en: "No entries match your filters.", ko: "조건에 맞는 일기가 없습니다." },
 };
 
 export function t(key: keyof typeof STRINGS, lang: UiLang): string {
