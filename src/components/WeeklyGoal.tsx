@@ -37,7 +37,7 @@ export function WeeklyGoal() {
 
   return (
     <section
-      aria-label={uiLang === "ko" ? "이번 주 진행" : "This week's progress"}
+      aria-label={uiLang === "ko" ? "주간 목표" : "Weekly Goal"}
       className="py-10"
     >
       <div className="flex items-center justify-between gap-6">
