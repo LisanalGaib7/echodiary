@@ -106,7 +106,7 @@ export function WeeklyGoal() {
         {Array.from({ length: target }).map((_, i) => (
           <span
             key={i}
-            class="h-0.5 rounded-full transition-colors duration-500 ${i < done ? 'bg-primary' : 'bg-muted/60'}"
+            className={`h-0.5 rounded-full transition-colors duration-500 ${i < done ? "bg-primary" : "bg-muted/60"}`}
             style={{ transitionDelay: `${i * 40}ms` }}
           />
         ))}
