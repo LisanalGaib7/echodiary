@@ -33,6 +33,10 @@ function WritePage() {
   const textareaRef = useAutoGrowTextarea(text);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CorrectionResult | null>(null);
+  const [today, setToday] = useState("");
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString(uiLang === "ko" ? "ko-KR" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }));
+  }, [uiLang]);
 
   async function onSubmit() {
     if (!text.trim()) {
