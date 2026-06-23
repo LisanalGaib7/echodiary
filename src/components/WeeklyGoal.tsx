@@ -63,16 +63,21 @@ export function WeeklyGoal() {
                   if (e.key === "Enter") save(Number((e.target as HTMLInputElement).value));
                   if (e.key === "Escape") setEditing(false);
                 }}
-                className="w-[1.6em] bg-transparent text-muted-foreground outline-none"
+                className="w-[2.2em] border-b border-primary/40 bg-transparent pb-px text-center text-foreground outline-none transition-colors focus:border-primary"
                 style={{ font: "inherit" }}
               />
             ) : (
               <button
                 onClick={() => setEditing(true)}
-                className="group inline-flex items-baseline gap-1 text-muted-foreground transition-colors hover:text-foreground"
+                className="group inline-flex items-baseline gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={uiLang === "ko" ? "목표 수정" : "Edit goal"}
               >
-                <span>{target}</span>
-                <Pencil className="h-2.5 w-2.5 self-center opacity-0 transition-opacity group-hover:opacity-60" strokeWidth={2} />
+                <span className="border-b border-transparent pb-px transition-all group-hover:border-muted-foreground/40">
+                  {target}
+                </span>
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted/60 transition-all group-hover:bg-muted">
+                  <Pencil className="h-2.5 w-2.5 opacity-40 transition-opacity group-hover:opacity-100" strokeWidth={2} />
+                </span>
               </button>
             )}
           </span>
