@@ -34,8 +34,6 @@ export function WeeklyGoal() {
     setEditing(false);
   }
 
-  const dayLabels =
-    uiLang === "ko" ? ["월", "화", "수", "목", "금", "토", "일"] : ["M", "T", "W", "T", "F", "S", "S"];
 
   return (
     <section
