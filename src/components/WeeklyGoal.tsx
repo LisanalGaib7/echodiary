@@ -42,7 +42,7 @@ export function WeeklyGoal() {
             max={14}
             defaultValue={target}
             autoFocus
-            onBlur={(e) => save(Number(e.target_path.value))}
+            onBlur={(e) => save(Number(e.target.value))}
             onKeyDown={(e) => e.key === "Enter" && save(Number((e.target as HTMLInputElement).value))}
             className="w-16 rounded-md border border-border bg-transparent px-2 py-1 text-right text-sm outline-none focus:ring-2 focus:ring-ring"
           />
