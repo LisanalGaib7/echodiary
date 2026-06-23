@@ -52,12 +52,11 @@ export function WeeklyGoal() {
             {done}
             <span className="text-muted-foreground/50">/</span>
             {editing ? (
-            <input
+              <input
                 ref={inputRef}
                 type="number"
                 min={1}
                 max={14}
- page={1}
                 defaultValue={target}
                 onBlur={(e) => save(Number(e.target.value))}
                 onKeyDown={(e) => {
