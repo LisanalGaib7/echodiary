@@ -114,11 +114,6 @@ export function WeeklyGoal() {
           />
         ))}
       </div>
-      <div className="mt-1.5 flex justify-between text-[9px] font-mono uppercase tracking-widest text-muted-foreground/40">
-        {dayLabels.map((d, i) => (
-          <span key={i}>{d}</span>
-        ))}
-      </div>
     </section>
   );
 }
