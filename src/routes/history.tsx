@@ -81,7 +81,9 @@ function HistoryPage() {
       {entries && entries.length > 0 && (
         <section className="journal-card p-5">
           <div className="mb-3 text-xs uppercase tracking-wide text-muted-foreground">{t("activity", uiLang)}</div>
-          <StreakHeatmap dates={entries.map((e) => e.date)} />
+          <div className="overflow-x-auto pb-1">
+            <StreakHeatmap dates={entries.map((e) => e.date)} weeks={52} />
+          </div>
         </section>
       )}
 
