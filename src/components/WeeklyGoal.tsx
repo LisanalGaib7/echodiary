@@ -52,18 +52,19 @@ export function WeeklyGoal() {
             {done}
             <span className="text-muted-foreground/50">/</span>
             {editing ? (
-              <input
+            <input
                 ref={inputRef}
                 type="number"
                 min={1}
                 max={14}
+ page={1}
                 defaultValue={target}
                 onBlur={(e) => save(Number(e.target.value))}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") save(Number((e.target as HTMLInputElement).value));
                   if (e.key === "Escape") setEditing(false);
                 }}
-                className="w-[1.6em] bg-transparent text-muted-foreground outline-none"
+                className="w-[2.2em] border-b border-primary/40 bg-transparent pb-px text-center text-foreground outline-none transition-colors focus:border-primary"
                 style={{ font: "inherit" }}
               />
             ) : (
