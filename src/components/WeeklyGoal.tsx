@@ -44,7 +44,7 @@ export function WeeklyGoal() {
         {/* Goal — compact inline */}
         <div className="flex items-baseline gap-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            {uiLang === "ko" ? "이번 주" : "This week"}
+            {uiLang === "ko" ? "주간 목표" : "Weekly Goal"}
           </span>
           <span className="font-serif text-base tabular-nums text-foreground">
             {done}
