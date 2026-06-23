@@ -40,11 +40,11 @@ export function WeeklyGoal() {
   return (
     <section
       aria-label={uiLang === "ko" ? "이번 주 진행" : "This week's progress"}
-      className="px-1"
+      className="border-y border-border/40 py-6"
     >
       {/* Two-column ledger: GOAL | STREAK, separated by a hairline */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-6 sm:gap-10">
-        {/* LEFT — Goal */}
+        {/* LEFT — Goal (hero metric) */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
@@ -95,7 +95,7 @@ export function WeeklyGoal() {
         {/* Vertical hairline */}
         <div className="w-px self-stretch bg-border/70" aria-hidden />
 
-        {/* RIGHT — Streak */}
+        {/* RIGHT — Streak (supporting metric, smaller & lighter) */}
         <div className="flex flex-col items-end gap-3">
           <div className="flex items-center gap-1.5">
             <Flame className="h-3 w-3 text-primary" strokeWidth={2.5} />
@@ -104,13 +104,13 @@ export function WeeklyGoal() {
             </span>
           </div>
 
-          <div className="flex items-baseline gap-2 font-serif tabular-nums leading-none">
-            <span className="text-5xl font-medium text-foreground sm:text-6xl">{streak}</span>
-            <span className="pb-1 text-sm text-muted-foreground sm:text-base">
+          <div className="flex items-baseline gap-1.5 leading-none">
+            <span className="text-3xl font-light tabular-nums text-muted-foreground sm:text-4xl">
+              {streak}
+            </span>
+            <span className="pb-0.5 text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
               {uiLang === "ko"
-                ? streak === 1
-                  ? "일"
-                  : "일"
+                ? "일"
                 : `day${streak === 1 ? "" : "s"}`}
             </span>
           </div>
