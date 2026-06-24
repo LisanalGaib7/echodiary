@@ -71,13 +71,13 @@ function WritePage() {
       <Toaster position="top-center" />
       <div>
         <h1 className="font-display text-4xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-5xl"><TypewriterTagline text={t("tagline", uiLang)} /></h1>
-        <p className="mt-2 text-xs text-muted-foreground" suppressHydrationWarning>{today || "\u00A0"}</p>
       </div>
 
       <WeeklyGoal />
 
 
       <div className="journal-card p-2">
+        <p className="px-5 pt-3 text-xs text-muted-foreground" suppressHydrationWarning>{today || "\u00A0"}</p>
         <textarea
           ref={textareaRef}
           value={text}
