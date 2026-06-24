@@ -77,6 +77,7 @@ function WritePage() {
 
 
       <div className="journal-card p-2">
+        <p className="px-5 pt-3 text-xs text-muted-foreground" suppressHydrationWarning>{today || "\u00A0"}</p>
         <textarea
           ref={textareaRef}
           value={text}
