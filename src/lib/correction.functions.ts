@@ -6,14 +6,14 @@ import { getRequest } from "@tanstack/react-start/server";
 import { generateText } from "ai";
 import { z } from "zod";
 import { createLovableAiGatewayProvider } from "./ai-gateway.server";
-import { EN_CATEGORIES, KO_CATEGORIES } from "./categories";
+import { categoryCodes } from "./categories";
 import type { CorrectionResult } from "./types";
 
 
 const InputSchema = z.object({ text: z.string().min(1).max(8000) });
 
-const enCodes = EN_CATEGORIES.map((c) => c.code).join(", ");
-const koCodes = KO_CATEGORIES.map((c) => c.code).join(", ");
+const enCodes = categoryCodes("en").join(", ");
+const koCodes = categoryCodes("ko").join(", ");
 
 const SYSTEM_PROMPT = `You are a strict but kind native-language diary editor.
 
@@ -145,16 +145,11 @@ export const correctEntry = createServerFn({ method: "POST" })
     const result = ResultSchema.parse(parsed);
 
     // Validate category codes against the detected language set
-    const allowed = result.language === "en"
-      ? EN_CATEGORIES.map((c) => c.code)
-      : KO_CATEGORIES.map((c) => c.code);
+    const allowed = categoryCodes(result.language);
+    const fallback = result.language === "en" ? "word_choice" : "naturalness";
     result.changes = result.changes.map((c) => ({
       ...c,
-      category: allowed.includes(c.category)
-        ? c.category
-        : result.language === "en"
-          ? "word_choice"
-          : "naturalness",
+      category: allowed.includes(c.category) ? c.category : fallback,
     }));
 
     return result;

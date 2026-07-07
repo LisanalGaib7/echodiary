@@ -1,5 +1,6 @@
 import { openDB, type IDBPDatabase } from "idb";
 import type { Entry } from "./types";
+import { emitEntriesChanged } from "./events";
 
 const DB_NAME = "echo-diary";
 const STORE = "entries";
@@ -27,6 +28,7 @@ function getDb() {
 export async function saveEntry(entry: Entry): Promise<void> {
   const db = await getDb();
   await db.put(STORE, entry);
+  emitEntriesChanged();
 }
 
 export async function getAllEntries(): Promise<Entry[]> {
@@ -43,4 +45,5 @@ export async function getEntry(id: string): Promise<Entry | undefined> {
 export async function deleteEntry(id: string): Promise<void> {
   const db = await getDb();
   await db.delete(STORE, id);
+  emitEntriesChanged();
 }

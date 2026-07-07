@@ -49,8 +49,21 @@ export const STRINGS = {
   allLangs: { en: "All", ko: "전체" },
   activity: { en: "Activity", ko: "활동" },
   noMatches: { en: "No entries match your filters.", ko: "조건에 맞는 일기가 없습니다." },
-};
+  pickPeriod: { en: "Pick a period and generate your report.", ko: "기간을 선택하고 레포트를 생성하세요." },
+  pageNotFound: { en: "Page not found", ko: "페이지를 찾을 수 없습니다" },
+  goHome: { en: "Go home", ko: "홈으로" },
+  pageDidntLoad: { en: "This page didn't load", ko: "페이지를 불러오지 못했습니다" },
+  somethingWrong: { en: "Something went wrong.", ko: "오류가 발생했습니다." },
+  tryAgain: { en: "Try again", ko: "다시 시도" },
+} as const;
 
-export function t(key: keyof typeof STRINGS, lang: UiLang): string {
-  return STRINGS[key][lang];
+export type StringKey = keyof typeof STRINGS;
+
+export function t(key: StringKey, lang: UiLang): string {
+  const entry = STRINGS[key];
+  if (!entry) {
+    if (import.meta.env?.DEV) console.warn(`[i18n] missing key: ${String(key)}`);
+    return String(key);
+  }
+  return entry[lang];
 }
