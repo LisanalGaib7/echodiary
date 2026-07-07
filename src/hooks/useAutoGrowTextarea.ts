@@ -6,10 +6,7 @@ export function useAutoGrowTextarea(value: string) {
   const resize = useCallback(() => {
     const el = ref.current;
     if (!el) return;
-
-    // Collapse to 0 first so scrollHeight reflects the real content height,
-    // then expand to fit. Using 0 instead of "auto" avoids getting stuck at
-    // the textarea's rows/min-height.
+    // Collapse first so scrollHeight reflects real content, then expand to fit.
     el.style.height = "0";
     el.style.height = `${el.scrollHeight}px`;
   }, []);
@@ -21,7 +18,15 @@ export function useAutoGrowTextarea(value: string) {
 
   useEffect(() => {
     window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
+    // Re-measure after web fonts load — metrics change and can clip the box.
+    let cancelled = false;
+    document.fonts?.ready?.then(() => {
+      if (!cancelled) resize();
+    });
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", resize);
+    };
   }, [resize]);
 
   return ref;

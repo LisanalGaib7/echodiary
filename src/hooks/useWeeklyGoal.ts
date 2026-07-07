@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getGoal, setGoal, entriesThisWeek, currentStreak } from "@/lib/goals";
 import { getAllEntries } from "@/lib/db";
+import { onEntriesChanged } from "@/lib/events";
 
 const MIN_TARGET = 1;
 const MAX_TARGET = 14;
@@ -12,11 +13,16 @@ export function useWeeklyGoal() {
 
   useEffect(() => {
     setTargetState(getGoal().target);
-    getAllEntries().then((entries) => {
+
+    async function refresh() {
+      const entries = await getAllEntries();
       const dates = entries.map((e) => e.date);
       setDone(entriesThisWeek(dates));
       setStreak(currentStreak(dates));
-    });
+    }
+
+    refresh();
+    return onEntriesChanged(refresh);
   }, []);
 
   function updateTarget(n: number) {

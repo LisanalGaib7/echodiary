@@ -18,7 +18,7 @@ export function setGoal(g: WeeklyGoal) {
   localStorage.setItem(KEY, JSON.stringify(g));
 }
 
-// Returns Monday of current ISO week at 00:00 local
+// Monday of current ISO week at 00:00 local
 export function startOfWeek(d = new Date()): Date {
   const date = new Date(d);
   date.setHours(0, 0, 0, 0);
@@ -27,23 +27,23 @@ export function startOfWeek(d = new Date()): Date {
   return date;
 }
 
+// Count unique local-date entries from the week's Monday onward.
+// Compares YYYY-MM-DD strings to avoid timezone drift from Date parsing.
 export function entriesThisWeek(dates: string[]): number {
-  const start = startOfWeek().getTime();
+  const startYmd = toYMD(startOfWeek());
   const uniq = new Set<string>();
   for (const d of dates) {
-    const t = new Date(d).getTime();
-    if (t >= start) uniq.add(d);
+    if (d >= startYmd) uniq.add(d);
   }
   return uniq.size;
 }
 
-// Compute current consecutive-day streak (counting today or yesterday as start)
+// Current consecutive-day streak, counting today or yesterday as start.
 export function currentStreak(dates: string[]): number {
   const set = new Set(dates);
   let streak = 0;
   const cur = new Date();
   cur.setHours(0, 0, 0, 0);
-  // Allow today missing: start from today, if absent try yesterday
   if (!set.has(toYMD(cur))) cur.setDate(cur.getDate() - 1);
   while (set.has(toYMD(cur))) {
     streak++;
