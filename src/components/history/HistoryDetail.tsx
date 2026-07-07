@@ -1,0 +1,46 @@
+import type { Entry } from "@/lib/types";
+import { CorrectionView } from "@/components/CorrectionView";
+import { useUiLang } from "@/lib/ui-lang";
+import { t } from "@/lib/i18n";
+
+interface Props {
+  entry: Entry;
+  onBack: () => void;
+  onDelete: (id: string) => void;
+}
+
+export function HistoryDetail({ entry, onBack, onDelete }: Props) {
+  const { uiLang } = useUiLang();
+  return (
+    <div className="space-y-6">
+      <button onClick={onBack} className="text-sm text-muted-foreground hover:text-foreground">
+        ← {t("back", uiLang)}
+      </button>
+      <div className="journal-card p-6">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <div className="text-xs uppercase tracking-wide text-muted-foreground">
+              {entry.date}
+            </div>
+            <span className="mt-1 inline-block rounded-full bg-secondary px-2 py-0.5 text-xs font-medium">
+              {entry.language.toUpperCase()}
+            </span>
+          </div>
+          <button
+            onClick={() => onDelete(entry.id)}
+            className="text-xs text-destructive hover:underline"
+          >
+            {t("delete", uiLang)}
+          </button>
+        </div>
+        <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
+          {t("original", uiLang)}
+        </h2>
+        <p className="whitespace-pre-wrap font-serif text-base leading-relaxed">
+          {entry.originalText}
+        </p>
+      </div>
+      <CorrectionView result={entry} lang={entry.language} />
+    </div>
+  );
+}
