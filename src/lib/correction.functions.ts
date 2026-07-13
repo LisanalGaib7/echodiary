@@ -123,16 +123,15 @@ export const correctEntry = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<CorrectionResult> => {
     const req = getRequest();
-    if (req) checkRateLimit(getClientIp(req));
+    if (req) {
+      assertAllowedOrigin(req);
+      await verifyTurnstile(data.captchaToken, req);
+      checkRateLimit(getClientIp(req));
+    }
 
-
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("AI service unavailable");
-
-
-    const gateway = createLovableAiGatewayProvider(key);
+    const model = getAiModel();
     const { text } = await generateText({
-      model: gateway("google/gemini-3-flash-preview"),
+      model,
       system: SYSTEM_PROMPT,
       prompt: data.text,
     });
