@@ -5,12 +5,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { generateText } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayProvider } from "./ai-gateway.server";
+import { getAiModel } from "./ai-provider.server";
+import { assertAllowedOrigin } from "./security/origin.server";
+import { verifyTurnstile } from "./security/turnstile.server";
 import { categoryCodes } from "./categories";
 import type { CorrectionResult } from "./types";
 
 
-const InputSchema = z.object({ text: z.string().min(1).max(8000) });
+const InputSchema = z.object({
+  text: z.string().min(1).max(8000),
+  captchaToken: z.string().optional(),
+});
 
 const enCodes = categoryCodes("en").join(", ");
 const koCodes = categoryCodes("ko").join(", ");
