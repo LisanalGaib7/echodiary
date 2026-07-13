@@ -5,12 +5,17 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { generateText } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayProvider } from "./ai-gateway.server";
+import { getAiModel } from "./ai-provider.server";
+import { assertAllowedOrigin } from "./security/origin.server";
+import { verifyTurnstile } from "./security/turnstile.server";
 import { categoryCodes } from "./categories";
 import type { CorrectionResult } from "./types";
 
 
-const InputSchema = z.object({ text: z.string().min(1).max(8000) });
+const InputSchema = z.object({
+  text: z.string().min(1).max(8000),
+  captchaToken: z.string().optional(),
+});
 
 const enCodes = categoryCodes("en").join(", ");
 const koCodes = categoryCodes("ko").join(", ");
@@ -118,16 +123,15 @@ export const correctEntry = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<CorrectionResult> => {
     const req = getRequest();
-    if (req) checkRateLimit(getClientIp(req));
+    if (req) {
+      assertAllowedOrigin(req);
+      await verifyTurnstile(data.captchaToken, req);
+      checkRateLimit(getClientIp(req));
+    }
 
-
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("AI service unavailable");
-
-
-    const gateway = createLovableAiGatewayProvider(key);
+    const model = getAiModel();
     const { text } = await generateText({
-      model: gateway("google/gemini-3-flash-preview"),
+      model,
       system: SYSTEM_PROMPT,
       prompt: data.text,
     });
