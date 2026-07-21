@@ -1,30 +1,37 @@
 /**
- * Simple smoke test: every tab in the sidebar has a matching route module
- * that exports a `Route` bound to the expected path. Guards against the
- * "tab click doesn't change content" regression by ensuring each route
- * is wired at the exact path the Nav links to.
+ * Smoke test: every tab in the sidebar has a matching route file whose
+ * createFileRoute() is bound to the expected URL. Guards against the
+ * "tab click doesn't change content" regression by ensuring the Nav
+ * links and the route files stay in lockstep.
  *
  * Run with: bun test
  */
 import { expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
-import { Route as IndexRoute } from "../index";
-import { Route as HistoryRoute } from "../history";
-import { Route as ReportRoute } from "../report";
-import { Route as SettingsRoute } from "../settings";
+const ROUTES_DIR = join(import.meta.dir, "..");
 
-const cases = [
-  { name: "write", route: IndexRoute, path: "/" },
-  { name: "history", route: HistoryRoute, path: "/history" },
-  { name: "report", route: ReportRoute, path: "/report" },
-  { name: "settings", route: SettingsRoute, path: "/settings" },
+const cases: { name: string; file: string; path: string }[] = [
+  { name: "write", file: "index.tsx", path: "/" },
+  { name: "history", file: "history.tsx", path: "/history" },
+  { name: "report", file: "report.tsx", path: "/report" },
+  { name: "settings", file: "settings.tsx", path: "/settings" },
 ];
 
 for (const c of cases) {
-  test(`tab '${c.name}' maps to ${c.path}`, () => {
-    // TanStack Router stores the declared path on the route options.
-    // Access via `any` to avoid depending on internal types.
-    const path = (c.route as any).options?.path ?? (c.route as any).path;
-    expect(path).toBe(c.path);
+  test(`tab '${c.name}' route file declares ${c.path}`, () => {
+    const src = readFileSync(join(ROUTES_DIR, c.file), "utf8");
+    expect(src).toContain(`createFileRoute("${c.path}")`);
   });
 }
+
+test("sidebar Nav links to every tab", () => {
+  const nav = readFileSync(
+    join(ROUTES_DIR, "..", "components", "root", "Nav.tsx"),
+    "utf8",
+  );
+  for (const c of cases) {
+    expect(nav).toContain(`to="${c.path}"`);
+  }
+});
