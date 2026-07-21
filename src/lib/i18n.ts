@@ -1,4 +1,13 @@
-export type UiLang = "en" | "ko";
+export type UiLang = "en" | "ko" | "ja" | "zh" | "es" | "fr";
+
+export const UI_LANGS: { value: UiLang; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "ko", label: "한국어" },
+  { value: "ja", label: "日本語" },
+  { value: "zh", label: "中文" },
+  { value: "es", label: "Español" },
+  { value: "fr", label: "Français" },
+];
 
 export const STRINGS = {
   appName: { en: "Echo", ko: "Echo" },
