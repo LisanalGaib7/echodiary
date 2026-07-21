@@ -8,6 +8,7 @@ import { RootShell } from "@/components/root/RootShell";
 import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
 import { RootError } from "@/components/root/RootError";
+import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -68,10 +69,17 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <UiLangProvider>
         <div className="min-h-screen">
-          <Nav />
-          <main className="mx-auto max-w-5xl px-4 py-8">
-            <Outlet />
-          </main>
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-10 md:grid-cols-12 md:gap-16 md:py-16">
+            <aside className="md:sticky md:top-16 md:col-span-3 md:self-start">
+              <Nav />
+              <div className="mt-12">
+                <WeeklySidebar />
+              </div>
+            </aside>
+            <main className="min-w-0 md:col-span-9">
+              <Outlet />
+            </main>
+          </div>
         </div>
       </UiLangProvider>
     </QueryClientProvider>
