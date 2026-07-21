@@ -85,5 +85,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-
-import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
