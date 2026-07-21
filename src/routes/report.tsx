@@ -40,7 +40,7 @@ function ReportPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="animate-page-enter space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-serif text-3xl font-semibold">{t("navReport", uiLang)}</h1>
         <div className="flex items-center gap-3">

@@ -9,6 +9,12 @@ export const STRINGS = {
   navWrite: { en: "Write", ko: "작성" },
   navHistory: { en: "History", ko: "일자별 보기" },
   navReport: { en: "Report", ko: "레포트" },
+  navSettings: { en: "Settings", ko: "설정" },
+  language: { en: "Language", ko: "언어" },
+  languageDesc: {
+    en: "Choose the interface language used across Echo.",
+    ko: "Echo 인터페이스에 사용할 언어를 선택하세요.",
+  },
   writePlaceholder: {
     en: "Write today's diary in English or Korean…",
     ko: "오늘의 일기를 한국어 또는 영어로 적어주세요…",
