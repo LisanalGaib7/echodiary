@@ -34,7 +34,7 @@ export function categoriesFor(lang: Lang): CategoryDef[] {
   return lang === "en" ? EN_CATEGORIES : KO_CATEGORIES;
 }
 
-export function categoryLabel(lang: Lang, code: string, uiLang: "en" | "ko"): string {
+export function categoryLabel(lang: Lang, code: string, uiLang: UiLang): string {
   const def = categoriesFor(lang).find((c) => c.code === code);
   if (!def) return code;
   return uiLang === "en" ? def.labelEn : def.labelKo;

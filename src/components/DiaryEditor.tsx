@@ -14,7 +14,7 @@ interface Props {
   onExposeClearDraft?: (fn: () => void) => void;
 }
 
-function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: "en" | "ko") {
+function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: UiLang) {
   if (status === "saving") return t("draftSaving", uiLang);
   if (status === "saved" && savedAt) {
     const time = savedAt.toLocaleTimeString(uiLang === "ko" ? "ko-KR" : "en-US", {
