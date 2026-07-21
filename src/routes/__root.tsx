@@ -9,6 +9,8 @@ import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
 import { RootError } from "@/components/root/RootError";
 import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
+import { MobileHeader } from "@/components/root/MobileHeader";
+import { MobileTabBar } from "@/components/root/MobileTabBar";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
