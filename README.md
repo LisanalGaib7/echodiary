@@ -1,52 +1,43 @@
 # Echo
 
-> Write. Get corrected. See your patterns.
-
-Echo is a multilingual diary app that turns everyday writing into targeted language practice. Write in English or Korean, get native-level corrections with an editorial change table and sub-scores, and watch your patterns emerge over time through streaks, weekly goals, and periodic reports.
+Bilingual (EN/KO) diary app with AI correction, a per-change table, streaks, weekly goals, and periodic reports.
 
 ---
 
 ## English
 
-### Overview
+### What it does
 
-Echo pairs a distraction-free diary editor with an AI writing coach. Each entry is corrected sentence by sentence, tagged by error category (Grammar, Collocation, Agreement, …), and scored across four dimensions — **Accuracy · Naturalness · Vocabulary · Structure**. Over time, the History heatmap and Report views surface the errors you make most often.
+- Write a diary entry in English or Korean.
+- Get a corrected version plus a table of changes with categories and per-change reasons.
+- See four sub-scores: Accuracy, Naturalness, Vocabulary, Structure.
+- Track streaks and a weekly goal.
+- Browse past entries in a 1-year activity heatmap and search them.
+- Generate reports of the errors you make most often.
 
-### Features
+### Stack
 
-- **Correction with editorial feedback** — refined version, per-change reasons, and coach-style overall notes.
-- **Changes table** — original vs. refined, categorized with compact pill tags.
-- **History** — searchable manuscript-style archive with a 1-year activity heatmap.
-- **Weekly goal & streak** — set a weekly target, track consecutive-day streaks.
-- **Reports** — aggregated top errors and average scores per language, per period.
-- **6-language UI** — English, Korean, Japanese, Chinese, Spanish, French.
-- **Auto-saving drafts** — never lose an in-progress entry.
-- **Responsive** — manuscript-spread layout on desktop, bottom tab bar on mobile.
+- TanStack Start v1, React 19, Vite 7
+- Tailwind CSS v4, shadcn/ui, Fraunces + Inter
+- IndexedDB (client-side entry storage)
+- Server-side AI gateway (OpenAI-compatible)
+- Cloudflare Workers runtime
 
-### Tech stack
-
-- **Framework**: TanStack Start v1 (React 19, SSR, server functions)
-- **Build**: Vite 7
-- **Styling**: Tailwind CSS v4 + shadcn/ui, Fraunces (display) + Inter (UI)
-- **Storage**: IndexedDB (client-side entries)
-- **AI**: Server-side AI gateway (OpenAI-compatible)
-- **Runtime**: Cloudflare Workers (edge)
-
-### Getting started
+### Scripts
 
 ```bash
 bun install
-bun dev            # start dev server on :8080
+bun dev            # dev server on :8080
 bun run build      # production build
 bun run build:dev  # development-mode build
-bun test           # run tests
-bun run lint       # eslint
-bun run format     # prettier
+bun test
+bun run lint
+bun run format
 ```
 
 ### Environment
 
-Copy `.env.example` to `.env` and fill in the AI gateway credentials and any related secrets.
+Copy `.env.example` to `.env` and fill in the AI gateway credentials.
 
 ### Project structure
 
@@ -58,63 +49,64 @@ src/
     history.tsx  # History
     report.tsx   # Report
     settings.tsx # Settings
-  components/    # UI components (correction, history, report, root, weekly-goal, ui-common)
+  components/    # correction, history, report, root, weekly-goal, ui-common
   hooks/         # useCorrection, useEntries, useDraft, useWeeklyGoal, …
   lib/           # i18n, db, ai-provider, correction functions, motion, format
   styles.css     # Tailwind + design tokens
 ```
 
-### Deployment & portability
+### UI languages
 
-Any Cloudflare Workers-compatible host runs the build output. See `MIGRATION.md` for notes on porting the AI provider and Vite config away from the default hosting environment.
+English, Korean, Japanese, Chinese, Spanish, French. The Write page header stays in English across all locales.
+
+### Deployment
+
+Any Cloudflare Workers-compatible host. See `MIGRATION.md` for notes on swapping the AI provider and Vite config.
 
 ### License
 
-Private project.
+Private.
 
 ---
 
 ## 한국어
 
-### 소개
+### 개요
 
-Echo는 하루의 글쓰기를 언어 학습으로 바꿔주는 다국어 일기 앱입니다. 한국어 또는 영어로 일기를 쓰면 원어민 수준의 교정과 변경표, 그리고 **정확성 · 자연스러움 · 어휘 · 구조** 네 가지 세부 점수를 받을 수 있고, 시간이 지나면 히스토리 히트맵과 레포트를 통해 자신의 반복 오류 패턴을 확인할 수 있습니다.
+한국어·영어 일기를 쓰고 교정과 변경표, 장기 패턴 리포트를 확인하는 앱.
 
-### 주요 기능
+### 기능
 
-- **교정 & 에디토리얼 피드백** — 교정본, 변경 이유, 코치가 쓴 듯한 총평.
-- **변경표** — 원문과 교정본을 나란히 보여주고 카테고리 태그로 분류.
-- **일자별 보기** — 검색 가능한 원고 형태 아카이브 + 1년치 활동 히트맵.
-- **주간 목표 & 연속 기록** — 이번 주 목표 설정, 연속 작성 일수 추적.
-- **레포트** — 언어별·기간별 상위 오류와 평균 점수 집계.
-- **6개 언어 UI** — 한국어, 영어, 일본어, 중국어, 스페인어, 프랑스어.
-- **임시 저장** — 작성 중인 글을 자동으로 보관.
-- **반응형** — 데스크톱은 원고 스프레드 레이아웃, 모바일은 하단 탭바.
+- 한국어 또는 영어로 일기 작성
+- 교정본과 변경 이유가 담긴 변경표
+- 네 가지 세부 점수: 정확성, 자연스러움, 어휘, 구조
+- 연속 작성 기록(스트릭)과 주간 목표
+- 지난 일기를 1년치 히트맵으로 확인, 검색 지원
+- 자주 반복되는 오류를 모아 보여주는 리포트
 
 ### 기술 스택
 
-- **프레임워크**: TanStack Start v1 (React 19, SSR, 서버 함수)
-- **빌드**: Vite 7
-- **스타일**: Tailwind CSS v4 + shadcn/ui, Fraunces(디스플레이) + Inter(UI)
-- **저장소**: IndexedDB (클라이언트 로컬 저장)
-- **AI**: 서버 사이드 AI 게이트웨이 (OpenAI 호환)
-- **런타임**: Cloudflare Workers (엣지)
+- TanStack Start v1, React 19, Vite 7
+- Tailwind CSS v4, shadcn/ui, Fraunces + Inter
+- IndexedDB (일기 로컬 저장)
+- 서버 사이드 AI 게이트웨이 (OpenAI 호환)
+- Cloudflare Workers 런타임
 
-### 시작하기
+### 스크립트
 
 ```bash
 bun install
 bun dev            # :8080 개발 서버
 bun run build      # 프로덕션 빌드
 bun run build:dev  # 개발 모드 빌드
-bun test           # 테스트 실행
-bun run lint       # eslint
-bun run format     # prettier
+bun test
+bun run lint
+bun run format
 ```
 
 ### 환경 변수
 
-`.env.example`을 `.env`로 복사한 뒤 AI 게이트웨이 관련 값을 채워주세요.
+`.env.example`을 `.env`로 복사한 뒤 AI 게이트웨이 값을 채운다.
 
 ### 프로젝트 구조
 
@@ -126,16 +118,20 @@ src/
     history.tsx  # 일자별 보기
     report.tsx   # 레포트
     settings.tsx # 설정
-  components/    # UI 컴포넌트 (correction, history, report, root, weekly-goal, ui-common)
+  components/    # correction, history, report, root, weekly-goal, ui-common
   hooks/         # useCorrection, useEntries, useDraft, useWeeklyGoal, …
   lib/           # i18n, db, ai-provider, 교정 함수, motion, format
   styles.css     # Tailwind + 디자인 토큰
 ```
 
-### 배포 & 이식성
+### UI 언어
 
-Cloudflare Workers 호환 호스트라면 어디서든 실행할 수 있습니다. AI 프로바이더와 Vite 설정을 기본 호스팅 환경에서 분리하는 방법은 `MIGRATION.md`를 참고하세요.
+영어, 한국어, 일본어, 중국어, 스페인어, 프랑스어. Write 페이지 헤더는 모든 언어에서 영어로 고정.
+
+### 배포
+
+Cloudflare Workers 호환 호스트에서 동작. AI 프로바이더와 Vite 설정 교체는 `MIGRATION.md` 참고.
 
 ### 라이선스
 
-Private project.
+Private.
