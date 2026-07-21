@@ -211,7 +211,7 @@
 }
 
 @keyframes page-enter {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -235,7 +235,7 @@
 }
 
 @utility animate-page-enter {
-  animation: page-enter var(--duration-sm) var(--ease-out) both;
+  animation: page-enter var(--duration-md) var(--ease-out) both;
 }
 
 @utility animate-row-highlight {

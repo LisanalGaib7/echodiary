@@ -1,27 +1,30 @@
-## 1. Header: 모든 언어에서 영어 고정
+## 1. "mastery" → "progress"
 
-`src/routes/index.tsx`에서 `uiLang === "ko"` 분기 제거. `kicker`와 `headline`을 항상 영어 버전으로 렌더:
+**`src/components/WeeklyGoal.tsx`** (line 45): 영어 라벨 `mastery` → `progress`. 한국어 "진행" 유지.
 
-- kicker: `"Chapter I — Write"`
-- headline: `Echo <span italic>your</span> thoughts.`
+```tsx
+{pct}% {complete ? (uiLang === "ko" ? "달성" : "reached") : uiLang === "ko" ? "진행" : "progress"}
+```
 
-이탤릭 악센트(`your`)는 그대로 유지.
+## 2. History fade-in 모션 통일
 
-## 2. README 톤 다듬기 — "AI스러움" 제거
+현재 각 라우트의 진입 애니메이션:
 
-현재 README의 마케팅/자기소개 어투("turns everyday writing into targeted language practice", "일기를 언어 학습으로 바꿔주는", 감탄사, 형용사 나열)를 걷어내고, 개발자가 리포를 열었을 때 필요한 정보만 담백하게 정리.
+| 라우트 | 현재 |
+|---|---|
+| `/` (index) | `.reveal` — blur+translate, `--duration-xl` (~500ms) 스태거 |
+| `/history` | `.animate-page-enter` — translate 6px, `--duration-sm` (~200ms) |
+| `/report` | `.animate-page-enter` — 동일 |
+| `/settings` | `.animate-page-enter` — 동일 |
 
-### 변경 방향
+History만 안 보이는 건 200ms + translate 6px가 너무 미묘해서입니다. 다른 탭도 동일하게 밋밋함.
 
-- **오프닝**: 소개 문단을 한 줄로 축소. "Echo is a bilingual (EN/KO) diary app with AI correction, change tables, and long-term pattern reports." / "한국어·영어 일기를 쓰고 교정과 변경표, 장기 패턴 리포트를 확인하는 앱."
-- **Features**: 형용사·수식어 제거하고 명사 위주 bullet. 예: "Correction with editorial feedback" → "Corrections with per-change reasons and overall notes."
-- **한국어 섹션**: 직역체·번역 냄새("~있습니다", "~수 있고") 정리하고 간결한 개발 문서체로. "주요 기능", "기술 스택" 같은 라벨은 유지.
-- 이모지·과장 어휘·"turns X into Y" 류 마케팅 구문 전부 제거.
-- Tech stack, Getting started, Environment, Project structure, Scripts, Deployment, License 섹션 구조와 코드블록은 유지 (정보성 있음).
+**변경**: `animate-page-enter` 키프레임을 살짝 강화 — opacity 0→1 + translateY 8px, `--duration-md` (~300ms)로 상향. reduced-motion은 그대로 존중.
 
-### 파일
+- `src/styles.css`의 `@keyframes page-enter`와 `@utility animate-page-enter` 두 곳만 조정
+- 라우트 파일들은 이미 `animate-page-enter`가 붙어 있으므로 수정 불필요
+- History의 두 분기(list / detail) 모두 이미 래퍼에 클래스가 있어 자동 적용
 
-- `README.md` — 전면 재작성 (구조 유지, 문장만 교체)
-- `src/routes/index.tsx` — `headline` / `kicker` 상수화, `uiLang` 분기 제거
+## 3. 검증
 
-코드 변경은 index.tsx 한 파일에 국한.
+`bun test`로 tab-switch 테스트 통과 확인 (라우트 모듈 헬스체크).
