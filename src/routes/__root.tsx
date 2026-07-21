@@ -8,6 +8,7 @@ import { RootShell } from "@/components/root/RootShell";
 import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
 import { RootError } from "@/components/root/RootError";
+import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
