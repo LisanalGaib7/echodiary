@@ -38,3 +38,23 @@ test("sidebar Nav links to every tab", () => {
     expect(nav).toContain(`to="${c.path}"`);
   }
 });
+
+test("router and tab links preload route chunks on intent", () => {
+  const router = readFileSync(join(ROUTES_DIR, "..", "router.tsx"), "utf8");
+  const nav = readFileSync(
+    join(ROUTES_DIR, "..", "components", "root", "Nav.tsx"),
+    "utf8",
+  );
+  const mobileTabBar = readFileSync(
+    join(ROUTES_DIR, "..", "components", "root", "MobileTabBar.tsx"),
+    "utf8",
+  );
+
+  expect(router).toContain('defaultPreload: "intent"');
+  for (const c of cases) {
+    expect(nav).toContain(`to="${c.path}"`);
+    expect(mobileTabBar).toContain(`to="${c.path}"`);
+  }
+  expect(nav.match(/preload="intent"/g)?.length).toBeGreaterThanOrEqual(cases.length);
+  expect(mobileTabBar.match(/preload="intent"/g)?.length).toBeGreaterThanOrEqual(cases.length);
+});

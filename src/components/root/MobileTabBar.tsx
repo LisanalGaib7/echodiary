@@ -17,6 +17,7 @@ export function MobileTabBar() {
     >
       <Link
         to="/"
+        preload="intent"
         activeOptions={{ exact: true }}
         className={item}
         activeProps={{ className: `${item} ${active}` }}
@@ -26,19 +27,19 @@ export function MobileTabBar() {
           {t("navWrite", uiLang)}
         </span>
       </Link>
-      <Link to="/history" className={item} activeProps={{ className: `${item} ${active}` }}>
+      <Link to="/history" preload="intent" className={item} activeProps={{ className: `${item} ${active}` }}>
         <Clock className="h-5 w-5" strokeWidth={1.75} />
         <span className="text-[9px] font-bold uppercase tracking-[0.14em]">
           {t("navHistory", uiLang)}
         </span>
       </Link>
-      <Link to="/report" className={item} activeProps={{ className: `${item} ${active}` }}>
+      <Link to="/report" preload="intent" className={item} activeProps={{ className: `${item} ${active}` }}>
         <BarChart3 className="h-5 w-5" strokeWidth={1.75} />
         <span className="text-[9px] font-bold uppercase tracking-[0.14em]">
           {t("navReport", uiLang)}
         </span>
       </Link>
-      <Link to="/settings" className={item} activeProps={{ className: `${item} ${active}` }}>
+      <Link to="/settings" preload="intent" className={item} activeProps={{ className: `${item} ${active}` }}>
         <Settings className="h-5 w-5" strokeWidth={1.75} />
         <span className="text-[9px] font-bold uppercase tracking-[0.14em]">
           {t("navSettings", uiLang)}
