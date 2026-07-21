@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import scrollbarCss from "../index.css?url";
@@ -67,6 +68,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      for (const to of ["/", "/history", "/report", "/settings"] as const) {
+        void router.preloadRoute({ to }).catch(() => {
+          // Ignore speculative preload failures; direct navigation will retry.
+        });
+      }
+    }, 180);
+
+    return () => window.clearTimeout(timer);
+  }, [router]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <UiLangProvider>

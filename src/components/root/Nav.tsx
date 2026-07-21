@@ -20,19 +20,20 @@ export function Nav() {
       <div className="flex flex-col gap-4">
         <Link
           to="/"
+          preload="intent"
           activeOptions={{ exact: true }}
           className={base}
           activeProps={{ className: `${base} ${active}` }}
         >
           {t("navWrite", uiLang)}
         </Link>
-        <Link to="/history" className={base} activeProps={{ className: `${base} ${active}` }}>
+        <Link to="/history" preload="intent" className={base} activeProps={{ className: `${base} ${active}` }}>
           {t("navHistory", uiLang)}
         </Link>
-        <Link to="/report" className={base} activeProps={{ className: `${base} ${active}` }}>
+        <Link to="/report" preload="intent" className={base} activeProps={{ className: `${base} ${active}` }}>
           {t("navReport", uiLang)}
         </Link>
-        <Link to="/settings" className={base} activeProps={{ className: `${base} ${active}` }}>
+        <Link to="/settings" preload="intent" className={base} activeProps={{ className: `${base} ${active}` }}>
           {t("navSettings", uiLang)}
         </Link>
       </div>
