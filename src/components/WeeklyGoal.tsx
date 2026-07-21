@@ -42,7 +42,7 @@ export function WeeklyGoal() {
             <GoalEditor target={target} min={minTarget} max={maxTarget} onSave={updateTarget} />
           </span>
           <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary tabular-nums">
-            {pct}% {complete ? (uiLang === "ko" ? "달성" : "reached") : uiLang === "ko" ? "진행" : "mastery"}
+            {pct}% {complete ? (uiLang === "ko" ? "달성" : "reached") : uiLang === "ko" ? "진행" : "progress"}
           </span>
         </div>
 
