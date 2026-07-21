@@ -1,9 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AlertCircle } from "lucide-react";
+import { useRef } from "react";
 import { Toaster } from "sonner";
 import { CorrectionView } from "@/components/CorrectionView";
+import { CorrectionSkeleton } from "@/components/CorrectionSkeleton";
 import { DiaryEditor } from "@/components/DiaryEditor";
 import { useCorrection } from "@/hooks/useCorrection";
 import { useUiLang } from "@/lib/ui-lang";
+import { t } from "@/lib/i18n";
+import { Spinner } from "@/components/ui-common/Spinner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,7 +25,8 @@ export const Route = createFileRoute("/")({
 
 function WritePage() {
   const { uiLang } = useUiLang();
-  const { loading, result, submit } = useCorrection();
+  const clearDraftRef = useRef<() => void>(() => {});
+  const { loading, result, error, submit, retry } = useCorrection(() => clearDraftRef.current());
 
   const headline =
     uiLang === "ko" ? (
@@ -33,12 +39,11 @@ function WritePage() {
       </>
     );
 
-  const kicker =
-    uiLang === "ko" ? "제 I 장 — 쓰기" : "Chapter I — Write";
+  const kicker = uiLang === "ko" ? "제 I 장 — 쓰기" : "Chapter I — Write";
 
   return (
     <div className="space-y-16">
-      <Toaster position="top-center" />
+      <Toaster position="top-center" richColors closeButton />
 
       <header className="reveal space-y-4" style={{ animationDelay: "40ms" }}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary/60">
@@ -50,10 +55,51 @@ function WritePage() {
       </header>
 
       <div className="reveal" style={{ animationDelay: "180ms" }}>
-        <DiaryEditor loading={loading} onSubmit={submit} />
+        <DiaryEditor
+          loading={loading}
+          onSubmit={submit}
+          onExposeClearDraft={(fn) => {
+            clearDraftRef.current = fn;
+          }}
+        />
       </div>
 
-      {result && (
+      {loading && (
+        <div className="reveal">
+          <CorrectionSkeleton />
+        </div>
+      )}
+
+      {error && !loading && (
+        <div
+          role="alert"
+          className="journal-card flex flex-col gap-4 border-destructive/30 p-6 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+              <AlertCircle className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                {t("correctionFailed", uiLang)}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {t("correctionFailedDesc", uiLang)}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={retry}
+            disabled={loading}
+            className="inline-flex items-center gap-2 self-start rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-primary transition-colors hover:bg-primary/10 disabled:opacity-60 sm:self-auto"
+          >
+            {loading && <Spinner size={12} />}
+            {t("retry", uiLang)}
+          </button>
+        </div>
+      )}
+
+      {result && !loading && (
         <div className="reveal">
           <CorrectionView result={result} lang={result.language} />
         </div>

@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { BarChart3 } from "lucide-react";
 import { getAllEntries } from "@/lib/db";
 import { buildReport, filterByPeriod, type LangReport } from "@/lib/report";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { SegmentedControl } from "@/components/ui-common/SegmentedControl";
 import { LangReportCard } from "@/components/report/LangReportCard";
+import { EmptyState } from "@/components/ui-common/EmptyState";
+import { Spinner } from "@/components/ui-common/Spinner";
 
 type Period = "all" | "30d";
 
@@ -53,17 +56,31 @@ function ReportPage() {
           <button
             onClick={generate}
             disabled={loading}
-            className="rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+            aria-busy={loading}
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
-            {loading ? "…" : t("generate", uiLang)}
+            {loading && <Spinner size={12} />}
+            {loading ? t("correcting", uiLang) : t("generate", uiLang)}
           </button>
         </div>
       </div>
 
       {reports === null ? (
-        <div className="journal-card p-12 text-center text-muted-foreground">
-          {t("pickPeriod", uiLang)}
-        </div>
+        <EmptyState
+          icon={<BarChart3 className="h-5 w-5" />}
+          title={t("emptyReportTitle", uiLang)}
+          description={t("emptyReportDesc", uiLang)}
+          action={
+            <button
+              onClick={generate}
+              disabled={loading}
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.22em] text-primary-foreground shadow-lg shadow-primary/10 transition-transform hover:scale-[1.02] disabled:opacity-60"
+            >
+              {loading && <Spinner size={12} />}
+              {t("generate", uiLang)}
+            </button>
+          }
+        />
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
           <LangReportCard r={reports.en} title={t("english", uiLang)} />
