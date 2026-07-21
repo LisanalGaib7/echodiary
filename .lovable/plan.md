@@ -1,129 +1,94 @@
-# 보안 강화 + 플랫폼 이식성(Portability) 플랜
+## 진단 (현재 상태)
 
-목표 두 가지를 한 번에 달성합니다.
-1. AI 크레딧 남용 등 실제 위험 차단
-2. Lovable을 떠나 Vercel / Cloudflare / Netlify / 자체 호스팅 어디로 가도 최소 수정으로 돌아가는 구조
+- 팔레트/타이포(Fraunces + Inter, 테라코타/크림)와 종이 질감(그레인·비네트)은 이미 ADA 후보급 재료. 다만 **레이아웃이 여전히 "카드 스택"** 이라 재료가 살지 않음.
+- Weekly Goal은 재구성됐지만, Hero → Goal → Editor → Correction 사이 **리듬(간격·스케일)이 균등**해서 시선 앵커가 없음.
+- 모션은 히어로 타이틀 blur-reveal + 타자기 캐럿 정도. **상태 전환(제출→교정 결과 등장)에 서사가 없음.**
+- History는 리스트+히트맵, Report는 카드 — 정보밀도만 있고 **"편집물"이 아님**.
 
----
+## 방향성 — ADA 방법론 3가지 축
 
-## 원칙: Lovable 종속 지점을 "얇은 어댑터"로 격리
-
-현재 코드에서 Lovable 특화 지점은 3곳뿐입니다:
-- `LOVABLE_API_KEY` 환경변수 + `ai.gateway.lovable.dev` (AI Gateway)
-- `@lovable.dev/vite-tanstack-config` (Vite 설정)
-- 배포 파이프라인 (Cloudflare Worker 타겟)
-
-나머지(TanStack Start, IndexedDB, Fraunces/Inter, UI 코드)는 이미 표준입니다. 이 3개만 갈아끼울 수 있게 만들면 이식성 확보 완료.
+1. **Sense of place**: 각 라우트가 같은 "종이" 위에 있지만 다른 방(챕터)처럼 느껴져야 함 → 라우트 전환에 shared-element / view-transition.
+2. **Focus over features**: 화면당 진짜 주인공 1개. Write=문장, History=시간, Report=패턴. 나머지는 whisper.
+3. **Motion with meaning**: 장식용 애니메이션 금지. 모든 모션이 상태·계층·인과를 설명.
 
 ---
 
-## Phase 1 — 보안 즉시 조치 (이식성과 무관하게 필요)
+## 개선 포인트 (영역별)
 
-### 1-1. AI 프로바이더 어댑터화 + 크레딧 보호
-`src/lib/ai-gateway.server.ts`를 **`src/lib/ai-provider.server.ts`** 로 일반화:
+### 공통 셸
 
-```
-provider = env.AI_PROVIDER  // "lovable" | "openai" | "openrouter" | "gemini"
-switch (provider) {
-  case "lovable":    createOpenAICompatible({ baseURL: LOVABLE_GW, headers: { "Lovable-API-Key": ... }})
-  case "openai":     createOpenAI({ apiKey: OPENAI_API_KEY })
-  case "openrouter": createOpenAICompatible({ baseURL: "https://openrouter.ai/api/v1", ... })
-  case "gemini":     createGoogleGenerativeAI({ apiKey: GEMINI_API_KEY })
-}
-```
+- **타이포 스케일 재정의**: display 72/64/40, body 16/14. 현재 hero가 body와 너무 가까움 → 대비 강화.
+- **그리드 재설계**: 12-col 대신 **편집디자인식 비대칭 그리드** (2/3 + 1/3), 왼쪽 여백에 챕터 번호("I. Write", "II. Archive", "III. Patterns")를 얇은 라벨로.
+- **Nav**: 상단 가로 nav → **왼쪽 세로 인덱스(데스크톱)** / 상단 최소 nav(모바일). 로고는 워드마크만.
+- **View transitions**: `document.startViewTransition` 로 라우트 이동 시 hero 타이틀·카드 morph.
+- **Cursor·caret**: 텍스트 영역 진입 시 caret가 부드럽게 페이드-인, 문단 완성 시 짧은 "펜 끝 튐" 마이크로모션.
 
-`correction.functions.ts`는 `getAiProvider()`만 호출 → 플랫폼 이동 시 env만 바꾸면 됨.
+### Write (I)
 
-동시에 크레딧 남용 방어:
-- **Origin/Referer 화이트리스트** 체크 (배포 도메인만 허용, 실패시 403)
-- **Cloudflare Turnstile** 위젯 추가 → 서버에서 토큰 검증 (`TURNSTILE_SECRET`)
-- 기존 in-memory rate limit은 유지하되 "best-effort" 주석 명확화
+- **날짜를 히어로화**: "Wednesday, June 24" 를 좌측 세로 라벨로 크게 (Fraunces Italic, 얇게). 텍스트에어리어는 배경과 동화 — 경계 없는 종이.
+- **Weekly Goal 재배치**: 상단 스트립 대신 **우측 sticky rail** — 진행률 세그먼트가 세로로, 첨삭 완료 시 세그먼트가 채워지는 애니메이션이 실제 인과를 보여줌.
+- **제출→결과 시네마**:
+  1. Correct 버튼 → 버튼이 로딩 인디케이터로 morph
+  2. 원문 텍스트가 살짝 blur/desaturate
+  3. Refined 문장이 원문 위에 오버레이되며 차이 나는 단어만 색이 도는 shimmer
+  4. 스크롤 하면 Refined가 위로 고정되고 아래에 ChangesTable이 stagger reveal
+- **원문↔교정 diff 인터랙션**: 밑줄 hover 시 해당 change 카드가 하이라이트 (양방향 링크).
 
-### 1-2. 입력/출력 하드닝
-- 입력 8000자 유지, 추가로 **일일 총 문자수 제한**(IP 기준)
-- 에러 메시지에서 provider/키 존재 여부 노출 금지 (이미 부분 적용, 재점검)
-- AI 응답 refinedText를 렌더링하는 컴포넌트에서 `dangerouslySetInnerHTML` 없는지 재확인 (현재 clean)
+### History (II)
 
-### 1-3. 보안 헤더
-`src/routes/__root.tsx` 또는 SSR 응답에 헤더 추가:
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
-- `Content-Security-Policy` (fonts.googleapis.com, fonts.gstatic.com, self만 허용)
+- **연대기 뷰**: 리스트 → **세로 타임라인**. 좌측에 월/주, 오른쪽에 엔트리. 히트맵은 상단이 아니라 **좌측 인덱스에 얇은 세로 스파크라인**으로 대체 (1년치, 스크롤 동기화).
+- **엔트리 카드**: 점수 배지 → 문장의 첫 15자를 큰 serif로, 점수는 우측 상단 작은 tabular.
+- **스크롤 스크럽**: 스파크라인 hover → 해당 주로 타임라인 점프, 배경에 옅은 하이라이트 밴드.
+- **필터**: 상단 filter bar → 왼쪽 사이드 rail (라디오식 세로).
 
----
+### Report (III)
 
-## Phase 2 — 이식성 리팩토링
+- **"이번 달 나의 패턴" 매거진 스프레드**: 통계 대신 문장형 인사이트가 주인공 ("You lean on 'very' 3.2× more than natives"). 숫자는 서브.
+- **데이터 시각화**: 카드형 → **한 페이지 대시보드 없이, 세로 스크롤 스토리**. 각 지표가 풀블리드 섹션.
+- **비교 오브젝트**: 사용자 vs 네이티브 빈도를 **작은 부호 조판**(dot/bar/tick)으로 표현, Recharts 최소화.
 
-### 2-1. 환경변수 계층 정리
-`src/lib/env.server.ts` 신설 — 모든 `process.env` 접근을 여기로 집중:
+### 모션 시스템 (시네마틱, 절제됨)
 
-```
-AI_PROVIDER, LOVABLE_API_KEY, OPENAI_API_KEY, GEMINI_API_KEY,
-TURNSTILE_SECRET, ALLOWED_ORIGINS, APP_BASE_URL
-```
+- **easing 통일**: `cubic-bezier(0.2, 0.9, 0.2, 1)` (Apple-like), duration 240/400/640ms 3단계.
+- **Stagger**: 리스트/그리드는 40ms 간격, 최대 8개까지만 stagger.
+- **Scroll-driven**: `animation-timeline: view()` 로 섹션 진입 시 opacity·translateY.
+- **Reduced motion**: 모든 모션은 `prefers-reduced-motion` 시 opacity fade만.
+- **Haptic-like micro**: 버튼 press 시 8ms scale(0.98), 성공 시 subtle glow pulse.
 
-`.env.example` 파일 추가 → 다른 플랫폼으로 옮길 때 참고용.
+### 폰트 세부
 
-### 2-2. Vite 설정 이중화
-현재 `@lovable.dev/vite-tanstack-config`가 tanstackStart/vite-react/tailwind/nitro/path-alias를 통째로 감싸고 있음. 마이그레이션 대비 **`vite.config.portable.ts`** 를 함께 준비:
-
-```ts
-// 표준 조합: tanstackStart + viteReact + tailwindcss + tsconfigPaths + nitro
-// Lovable 전용 componentTagger/error-logger만 빠짐
-```
-
-평소엔 `vite.config.ts`(Lovable) 사용, 이관 시 `vite.config.portable.ts`로 교체 + `package.json`에서 `@lovable.dev/*` 제거하면 즉시 표준 TanStack Start 프로젝트가 됨.
-
-### 2-3. 배포 타겟 문서화
-`MIGRATION.md` 작성:
-- **Vercel**: `nitro preset = vercel`, env 등록, Edge/Node 선택
-- **Cloudflare Pages/Workers**: 현 세팅 그대로 (`nodejs_compat`)
-- **Netlify**: `nitro preset = netlify`
-- **자체 호스팅(Node)**: `nitro preset = node-server`, `node .output/server/index.mjs`
-
-각 케이스별 필요한 env 목록과 도메인/CSP 조정 포인트 포함.
-
-### 2-4. 데이터 이식성
-현재 저장소는 브라우저 IndexedDB(`src/lib/db.ts`)라 플랫폼 이동과 무관 ✅. 단:
-- **Export/Import(JSON)** 버튼 추가 (History 페이지)
-- 향후 Cloud 옮길 때를 위해 `Entry` 스키마 버전 필드(`schemaVersion: 1`) 준비
-
-### 2-5. 에러 리포팅 분리
-`src/lib/lovable-error-reporting.ts`가 Lovable 전용. `src/lib/error-reporting.ts` 인터페이스로 감싸고, 프로바이더 미설정 시 no-op로 동작하게 → 이관 후 Sentry 등으로 교체 쉬움.
+- **Fraunces**: opsz 72로 히어로 (SOFT=100, WONK=1). 숫자는 tabular + `ss01`.
+- **Inter**: v4, feature `cv11 ss03`, body letter-spacing -0.01em.
+- **선택 추가**: 얇은 sans (예: **Söhne** 대체로 **Geist** 또는 **Inter Display**) — 라벨 전용. → 승인 시 도입.
 
 ---
 
-## Phase 3 — 검증
+## 실행 절차
 
-- `bunx tsgo` 통과
-- 로컬 build + 실제 첨삭 1회
-- Origin 화이트리스트/Turnstile을 우회한 curl 요청이 403 반환하는지 확인
-- `AI_PROVIDER=openai` 로 바꿔 스모크 테스트 (마이그레이션 리허설)
+1. **캡처**: Playwright로 Write / History / Report / 결과 상태 4장 캡처.
+2. **디자인 방향 3안 생성**(`design--create_directions`) — 아래 3가지 무드로 렌더링:
+  - **A. Editorial Silence** — 매거진 스프레드, 비대칭 그리드, 큰 Fraunces italic, 종이 여백 극대화.
+  - **B. Cinematic Journal** — 어두운 톤 옵션, 필름 그레인 강조, 히어로가 극영화 타이틀처럼 등장.
+  - **C. Precision Instrument** — 얇은 sans + 얇은 rules, 데이터가 조판된 계기판처럼, 모션은 기계적으로 정확.
+3. **사용자 선택** → 그 방향으로 스타일 토큰·레이아웃·모션 커밋.
+4. **구현 순서** (승인 후 별도 진행):
+  - Step 1: 토큰·타이포 스케일·easing 통일 (`styles.css`)
+  - Step 2: Write 라우트 재구성 + 제출 시네마 모션
+  - Step 3: History 타임라인 재구성
+  - Step 4: Report 스토리 스프레드
+  - Step 5: View transitions + reduced-motion QA
 
----
+## 기술 노트
 
-## 파일 변경 요약
+- View transitions는 TanStack Router `router.navigate` 를 `document.startViewTransition` 로 래핑하는 얇은 훅으로 도입 (fallback: no-op).
+- `animation-timeline: view()` 는 최신 Chromium만 → 안전 fallback으로 `IntersectionObserver` 병행.
+- 새 폰트 도입 시 `__root.tsx` `<link rel="preconnect">` + `font-display: swap` 유지.
+- 스크롤 스크럽·shared element는 페이지 재렌더 없이 layout-preserving 하도록 `useLayoutEffect` 로 측정.
 
-**신규**
-- `src/lib/ai-provider.server.ts`
-- `src/lib/env.server.ts`
-- `src/lib/error-reporting.ts`
-- `src/lib/security/origin.ts`, `src/lib/security/turnstile.ts`
-- `vite.config.portable.ts`
-- `.env.example`
-- `MIGRATION.md`
+## 확인 필요
 
-**수정**
-- `src/lib/correction.functions.ts` (프로바이더 추상화 + origin/turnstile 검증)
-- `src/routes/__root.tsx` 또는 `src/server.ts` (보안 헤더)
-- `src/components/DiaryEditor.tsx` (Turnstile 위젯)
-- `src/routes/history.tsx` (Export/Import)
-- `package.json` (선택 의존성 표시)
+- 다크 모드는 이번 리디자인에 포함할까요? (현재 토큰만 존재, UI 미노출) -> 다크 모드 포함
+- 새 얇은 sans(Geist/Inter Display) 도입 허용? 아니면 Inter만 유지? -> 허용 
+- View transitions 미지원 브라우저(Safari 구버전)는 그냥 무모션 fallback 으로 갈까요? -> ok
 
-**삭제 후보(이관 시)**
-- `@lovable.dev/vite-tanstack-config`, `lovable-error-reporting` 관련 임포트
-
-## 범위 외
-- UI/디자인 변경 없음
-- 사용자 인증 도입 없음 (원하면 Phase 4로 별도 계획 — Lovable Cloud 대신 Supabase 직접 연결이 이식성 최상)
+플랜 승인해 주시면 캡처 → 3안 렌더링으로 넘어갑니다.
