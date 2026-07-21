@@ -4,52 +4,50 @@ import { t } from "@/lib/i18n";
 import { SegmentedControl } from "@/components/ui-common/SegmentedControl";
 import type { UiLang } from "@/lib/i18n";
 
-const linkCls = "px-3 py-1.5 text-sm rounded-md transition-colors hover:bg-muted";
-const activeCls = "bg-secondary text-foreground font-medium";
+const base =
+  "block pl-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/40 transition-colors hover:text-primary";
+const active = "text-primary border-l-2 border-primary -ml-[2px]";
 
 export function Nav() {
   const { uiLang, setUiLang } = useUiLang();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-paper/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-baseline gap-2">
-          <span className="font-display text-2xl font-semibold tracking-tight text-primary">
-            Echo
-          </span>
-          <span className="hidden text-xs text-muted-foreground sm:inline">
-            {t("tagline", uiLang)}
-          </span>
+    <nav aria-label="Primary" className="flex flex-col gap-8">
+      <Link to="/" className="inline-flex items-baseline gap-2">
+        <span className="font-display text-3xl font-light italic tracking-tight text-primary">
+          Echo
+        </span>
+      </Link>
+
+      <div className="flex flex-col gap-4">
+        <Link
+          to="/"
+          activeOptions={{ exact: true }}
+          className={base}
+          activeProps={{ className: `${base} ${active}` }}
+        >
+          {t("navWrite", uiLang)}
         </Link>
-        <nav className="flex items-center gap-1">
-          <Link
-            to="/"
-            activeOptions={{ exact: true }}
-            className={linkCls}
-            activeProps={{ className: `${linkCls} ${activeCls}` }}
-          >
-            {t("navWrite", uiLang)}
-          </Link>
-          <Link to="/history" className={linkCls} activeProps={{ className: `${linkCls} ${activeCls}` }}>
-            {t("navHistory", uiLang)}
-          </Link>
-          <Link to="/report" className={linkCls} activeProps={{ className: `${linkCls} ${activeCls}` }}>
-            {t("navReport", uiLang)}
-          </Link>
-          <div className="ml-2">
-            <SegmentedControl<UiLang>
-              size="xs"
-              ariaLabel="UI language"
-              value={uiLang}
-              onChange={setUiLang}
-              options={[
-                { value: "en", label: "EN" },
-                { value: "ko", label: "KO" },
-              ]}
-            />
-          </div>
-        </nav>
+        <Link to="/history" className={base} activeProps={{ className: `${base} ${active}` }}>
+          {t("navHistory", uiLang)}
+        </Link>
+        <Link to="/report" className={base} activeProps={{ className: `${base} ${active}` }}>
+          {t("navReport", uiLang)}
+        </Link>
       </div>
-    </header>
+
+      <div className="pl-4">
+        <SegmentedControl<UiLang>
+          size="xs"
+          ariaLabel="UI language"
+          value={uiLang}
+          onChange={setUiLang}
+          options={[
+            { value: "en", label: "EN" },
+            { value: "ko", label: "KO" },
+          ]}
+        />
+      </div>
+    </nav>
   );
 }

@@ -2,11 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Toaster } from "sonner";
 import { CorrectionView } from "@/components/CorrectionView";
 import { DiaryEditor } from "@/components/DiaryEditor";
-import { TypewriterTagline } from "@/components/TypewriterTagline";
-import { WeeklyGoal } from "@/components/WeeklyGoal";
 import { useCorrection } from "@/hooks/useCorrection";
 import { useUiLang } from "@/lib/ui-lang";
-import { t } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,19 +22,42 @@ function WritePage() {
   const { uiLang } = useUiLang();
   const { loading, result, submit } = useCorrection();
 
+  const headline =
+    uiLang === "ko" ? (
+      <>
+        오늘의 <span className="italic font-light">문장</span>을 남기세요.
+      </>
+    ) : (
+      <>
+        Echo <span className="italic font-light">your</span> thoughts.
+      </>
+    );
+
+  const kicker =
+    uiLang === "ko" ? "제 I 장 — 쓰기" : "Chapter I — Write";
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-16">
       <Toaster position="top-center" />
 
-      <h1 className="font-display text-4xl font-medium leading-[1.08] tracking-[-0.02em] sm:text-5xl">
-        <TypewriterTagline text={t("tagline", uiLang)} />
-      </h1>
+      <header className="reveal space-y-4" style={{ animationDelay: "40ms" }}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary/60">
+          {kicker}
+        </p>
+        <h1 className="font-display text-6xl font-light leading-[0.92] tracking-[-0.03em] text-primary sm:text-7xl md:text-[6rem]">
+          {headline}
+        </h1>
+      </header>
 
-      <WeeklyGoal />
+      <div className="reveal" style={{ animationDelay: "180ms" }}>
+        <DiaryEditor loading={loading} onSubmit={submit} />
+      </div>
 
-      <DiaryEditor loading={loading} onSubmit={submit} />
-
-      {result && <CorrectionView result={result} lang={result.language} />}
+      {result && (
+        <div className="reveal">
+          <CorrectionView result={result} lang={result.language} />
+        </div>
+      )}
     </div>
   );
 }
