@@ -9,6 +9,8 @@ import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
 import { RootError } from "@/components/root/RootError";
 import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
+import { MobileHeader } from "@/components/root/MobileHeader";
+import { MobileTabBar } from "@/components/root/MobileTabBar";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
@@ -69,17 +71,19 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <UiLangProvider>
         <div className="min-h-screen">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-10 md:grid-cols-12 md:gap-16 md:py-16">
-            <aside className="md:sticky md:top-16 md:col-span-3 md:self-start">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-6 md:grid-cols-12 md:gap-16 md:py-16">
+            <aside className="hidden md:sticky md:top-16 md:col-span-3 md:block md:self-start">
               <Nav />
               <div className="mt-12">
                 <WeeklySidebar />
               </div>
             </aside>
-            <main className="min-w-0 md:col-span-9">
+            <main className="min-w-0 pb-24 md:col-span-9 md:pb-0">
+              <MobileHeader />
               <Outlet />
             </main>
           </div>
+          <MobileTabBar />
         </div>
       </UiLangProvider>
     </QueryClientProvider>
