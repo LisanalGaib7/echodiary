@@ -179,13 +179,30 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ─────────────────────────────────────────────
+   Motion tokens (mirrored in src/lib/motion.ts)
+   ───────────────────────────────────────────── */
+:root {
+  --duration-xs: 120ms;
+  --duration-sm: 200ms;
+  --duration-md: 320ms;
+  --duration-lg: 500ms;
+  --duration-xl: 900ms;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.68, 0.19);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --stagger-tight: 30ms;
+  --stagger-base: 60ms;
+  --stagger-loose: 90ms;
+}
+
+/* Keyframes */
 @keyframes caret-blink {
   0%, 49% { opacity: 1; }
   50%, 100% { opacity: 0; }
-}
-
-@utility animate-caret-blink {
-  animation: caret-blink 500ms steps(1, end) infinite;
 }
 
 @keyframes reveal-up {
@@ -193,11 +210,57 @@
   to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes row-highlight {
+  from { opacity: 0; transform: translateX(-6px); background-color: oklch(from var(--primary) l c h / 0.06); }
+  to { opacity: 1; transform: translateX(0); background-color: transparent; }
+}
+
+@keyframes shimmer-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Utilities bound to tokens */
+@utility animate-caret-blink {
+  animation: caret-blink var(--duration-lg) steps(1, end) infinite;
+}
+
+@utility animate-reveal {
+  animation: reveal-up var(--duration-xl) var(--ease-out) both;
+}
+
+@utility animate-page-enter {
+  animation: page-enter var(--duration-lg) var(--ease-out) both;
+}
+
+@utility animate-row-highlight {
+  animation: row-highlight var(--duration-lg) var(--ease-out) both;
+}
+
+@utility animate-loading {
+  animation: shimmer-pulse var(--duration-xl) var(--ease-in-out) infinite;
+}
+
+/* Backwards-compat: existing `.reveal` class continues to work */
 .reveal {
-  animation: reveal-up 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: reveal-up var(--duration-xl) var(--ease-out) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { animation: none; }
+  .reveal,
+  .animate-reveal,
+  .animate-page-enter,
+  .animate-row-highlight { animation: none !important; }
+  .animate-loading { animation: none !important; opacity: 0.75; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
+
 
