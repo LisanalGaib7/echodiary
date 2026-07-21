@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useAutoGrowTextarea } from "@/hooks/useAutoGrowTextarea";
 import { useDraft, type DraftStatus } from "@/hooks/useDraft";
 import { useUiLang } from "@/lib/ui-lang";
-import { t } from "@/lib/i18n";
+import { t, type UiLang } from "@/lib/i18n";
 import { formatLongDate } from "@/lib/format";
 import { Spinner } from "@/components/ui-common/Spinner";
 
@@ -14,7 +14,7 @@ interface Props {
   onExposeClearDraft?: (fn: () => void) => void;
 }
 
-function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: "en" | "ko") {
+function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: UiLang) {
   if (status === "saving") return t("draftSaving", uiLang);
   if (status === "saved" && savedAt) {
     const time = savedAt.toLocaleTimeString(uiLang === "ko" ? "ko-KR" : "en-US", {
