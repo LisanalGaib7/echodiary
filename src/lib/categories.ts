@@ -1,6 +1,8 @@
 // Single source of truth for error categories.
 // Referenced by both the UI and the AI prompt.
 
+import type { UiLang } from "@/lib/i18n";
+
 export type Lang = "en" | "ko";
 
 export interface CategoryDef {
