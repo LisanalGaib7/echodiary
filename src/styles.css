@@ -235,7 +235,7 @@
 }
 
 @utility animate-page-enter {
-  animation: page-enter var(--duration-sm) var(--ease-out) both;
+  animation: page-enter var(--duration-md) var(--ease-out) both;
 }
 
 @utility animate-row-highlight {
