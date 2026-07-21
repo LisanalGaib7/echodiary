@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { BookOpen, SearchX } from "lucide-react";
 import { deleteEntry } from "@/lib/db";
 import { useEntries } from "@/hooks/useEntries";
 import type { Entry } from "@/lib/types";
@@ -7,6 +8,8 @@ import { StreakHeatmap } from "@/components/StreakHeatmap";
 import { HistoryFilters, type LangFilter } from "@/components/history/HistoryFilters";
 import { HistoryList } from "@/components/history/HistoryList";
 import { HistoryDetail } from "@/components/history/HistoryDetail";
+import { EmptyState } from "@/components/ui-common/EmptyState";
+import { Spinner } from "@/components/ui-common/Spinner";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 
@@ -77,15 +80,41 @@ function HistoryPage() {
       )}
 
       {entries === null ? (
-        <p className="text-muted-foreground">…</p>
+        <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
+          <Spinner size={14} />
+          <span>…</span>
+        </div>
       ) : entries.length === 0 ? (
-        <div className="journal-card p-12 text-center text-muted-foreground">
-          {t("noEntries", uiLang)}
-        </div>
+        <EmptyState
+          icon={<BookOpen className="h-5 w-5" />}
+          title={t("emptyHistoryTitle", uiLang)}
+          description={t("emptyHistoryDesc", uiLang)}
+          action={
+            <Link
+              to="/"
+              className="inline-flex items-center rounded-full bg-primary px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.22em] text-primary-foreground shadow-lg shadow-primary/10 transition-transform hover:scale-[1.02]"
+            >
+              {t("goWrite", uiLang)}
+            </Link>
+          }
+        />
       ) : filtered.length === 0 ? (
-        <div className="journal-card p-12 text-center text-muted-foreground">
-          {t("noMatches", uiLang)}
-        </div>
+        <EmptyState
+          icon={<SearchX className="h-5 w-5" />}
+          title={t("emptyMatchesTitle", uiLang)}
+          description={t("emptyMatchesDesc", uiLang)}
+          action={
+            <button
+              onClick={() => {
+                setQuery("");
+                setLangFilter("all");
+              }}
+              className="inline-flex items-center rounded-full border border-primary/30 bg-primary/5 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-primary transition-colors hover:bg-primary/10"
+            >
+              {t("clearFilters", uiLang)}
+            </button>
+          }
+        />
       ) : (
         <HistoryList entries={filtered} onOpen={setSelected} />
       )}
