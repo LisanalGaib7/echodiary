@@ -2,6 +2,7 @@ import type { Change, Lang } from "@/lib/types";
 import { categoryLabel } from "@/lib/categories";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
+import { STAGGER } from "@/lib/motion";
 
 export function ChangesTable({ changes, lang }: { changes: Change[]; lang: Lang }) {
   const { uiLang } = useUiLang();
@@ -26,7 +27,11 @@ export function ChangesTable({ changes, lang }: { changes: Change[]; lang: Lang 
             </thead>
             <tbody>
               {changes.map((c, i) => (
-                <tr key={i} className="border-t border-border align-top">
+                <tr
+                  key={i}
+                  className="animate-row-highlight border-t border-border align-top"
+                  style={{ animationDelay: `${i * STAGGER.base}ms` }}
+                >
                   <td className="px-4 py-3">
                     <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-destructive">
                       {c.original}

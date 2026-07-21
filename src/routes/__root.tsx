@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, useRouterState } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
 import scrollbarCss from "../index.css?url";
@@ -65,6 +65,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <QueryClientProvider client={queryClient}>
       <UiLangProvider>
@@ -76,7 +77,7 @@ function RootComponent() {
                 <WeeklySidebar />
               </div>
             </aside>
-            <main className="min-w-0 md:col-span-9">
+            <main key={pathname} className="min-w-0 animate-page-enter md:col-span-9">
               <Outlet />
             </main>
           </div>
