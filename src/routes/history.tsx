@@ -50,13 +50,17 @@ function HistoryPage() {
   }, [entries, query, langFilter]);
 
   if (selected) {
-    return <HistoryDetail entry={selected} onBack={() => setSelected(null)} onDelete={onDelete} />;
+    return (
+      <div className="animate-page-enter">
+        <HistoryDetail entry={selected} onBack={() => setSelected(null)} onDelete={onDelete} />
+      </div>
+    );
   }
 
   const hasEntries = entries && entries.length > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="animate-page-enter space-y-6">
       <h1 className="font-serif text-3xl font-semibold">{t("navHistory", uiLang)}</h1>
 
       {hasEntries && (
