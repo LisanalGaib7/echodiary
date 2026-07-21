@@ -55,6 +55,38 @@ export const STRINGS = {
   pageDidntLoad: { en: "This page didn't load", ko: "페이지를 불러오지 못했습니다" },
   somethingWrong: { en: "Something went wrong.", ko: "오류가 발생했습니다." },
   tryAgain: { en: "Try again", ko: "다시 시도" },
+  retry: { en: "Retry", ko: "다시 시도" },
+  draftSaving: { en: "Saving…", ko: "저장 중…" },
+  draftSavedAt: { en: "Draft saved", ko: "임시 저장됨" },
+  draftRestored: { en: "Draft restored", ko: "임시 저장을 불러왔어요" },
+  correctionSaved: { en: "Saved to history", ko: "기록에 저장되었습니다" },
+  correctionFailed: { en: "Correction failed", ko: "교정에 실패했어요" },
+  correctionFailedDesc: {
+    en: "We couldn't reach the correction service. Your text is safe — try again.",
+    ko: "교정 서비스에 연결하지 못했어요. 작성한 내용은 그대로 있어요 — 다시 시도해보세요.",
+  },
+  emptyWriteTitle: { en: "Start with today's page", ko: "오늘의 페이지를 시작하세요" },
+  emptyWriteDesc: {
+    en: "Write a few sentences above and press Correct to see native-level feedback.",
+    ko: "위에 몇 문장 적고 ‘교정’을 누르면 원어민 수준의 피드백을 받아볼 수 있어요.",
+  },
+  emptyHistoryTitle: { en: "No entries yet", ko: "아직 작성한 일기가 없어요" },
+  emptyHistoryDesc: {
+    en: "Your finished entries will collect here as a searchable manuscript.",
+    ko: "완성한 일기는 이곳에 검색 가능한 원고처럼 쌓입니다.",
+  },
+  emptyMatchesTitle: { en: "Nothing matches", ko: "일치하는 결과가 없어요" },
+  emptyMatchesDesc: {
+    en: "Try a different keyword or reset the language filter.",
+    ko: "다른 검색어를 사용하거나 언어 필터를 초기화해보세요.",
+  },
+  clearFilters: { en: "Clear filters", ko: "필터 초기화" },
+  goWrite: { en: "Start writing", ko: "일기 쓰러 가기" },
+  emptyReportTitle: { en: "Your patterns, distilled", ko: "당신의 패턴, 요약본" },
+  emptyReportDesc: {
+    en: "Pick a period above and generate a report to see which errors you make most often.",
+    ko: "위에서 기간을 고르고 레포트를 생성하면 자주 반복되는 오류를 확인할 수 있어요.",
+  },
 } as const;
 
 export type StringKey = keyof typeof STRINGS;
