@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SegmentedControl } from "@/components/ui-common/SegmentedControl";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useUiLang } from "@/lib/ui-lang";
-import { t, type UiLang } from "@/lib/i18n";
+import { t, UI_LANGS, type UiLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -29,16 +35,18 @@ function SettingsPage() {
             {t("languageDesc", uiLang)}
           </p>
         </div>
-        <SegmentedControl<UiLang>
-          size="md"
-          ariaLabel="UI language"
-          value={uiLang}
-          onChange={setUiLang}
-          options={[
-            { value: "en", label: "English" },
-            { value: "ko", label: "한국어" },
-          ]}
-        />
+        <Select value={uiLang} onValueChange={(v) => setUiLang(v as UiLang)}>
+          <SelectTrigger className="w-full max-w-xs" aria-label="UI language">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {UI_LANGS.map((l) => (
+              <SelectItem key={l.value} value={l.value}>
+                {l.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </section>
     </div>
   );
