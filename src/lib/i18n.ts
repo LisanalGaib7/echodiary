@@ -107,10 +107,10 @@ export const STRINGS = {
 export type StringKey = keyof typeof STRINGS;
 
 export function t(key: StringKey, lang: UiLang): string {
-  const entry = STRINGS[key];
+  const entry = STRINGS[key] as Record<string, string> | undefined;
   if (!entry) {
     if (import.meta.env?.DEV) console.warn(`[i18n] missing key: ${String(key)}`);
     return String(key);
   }
-  return entry[lang];
+  return entry[lang] ?? entry.en;
 }
