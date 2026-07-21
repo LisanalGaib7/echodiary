@@ -13,7 +13,9 @@ export function UiLangProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem("echo.uiLang") : null;
-    if (stored === "en" || stored === "ko") setUiLangState(stored);
+    if (stored && ["en", "ko", "ja", "zh", "es", "fr"].includes(stored)) {
+      setUiLangState(stored as UiLang);
+    }
   }, []);
 
   const setUiLang = (l: UiLang) => {
