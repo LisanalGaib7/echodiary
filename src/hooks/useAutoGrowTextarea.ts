@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 
-export function useAutoGrowTextarea(value: string) {
+/**
+ * @param metricsKey Bump this when something other than `value` changes the
+ *   textarea's line metrics (e.g. a font-size step), since scrollHeight
+ *   depends on both. Without it the box can clip: same text, taller lines.
+ */
+export function useAutoGrowTextarea(value: string, metricsKey?: string | number) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
   const resize = useCallback(() => {
@@ -14,7 +19,7 @@ export function useAutoGrowTextarea(value: string) {
   // Resize before paint so users never see a collapsed frame.
   useLayoutEffect(() => {
     resize();
-  }, [value, resize]);
+  }, [value, metricsKey, resize]);
 
   useEffect(() => {
     window.addEventListener("resize", resize);

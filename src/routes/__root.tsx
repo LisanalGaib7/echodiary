@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import appCss from "../styles.css?url";
 import scrollbarCss from "../index.css?url";
 import { UiLangProvider } from "@/lib/ui-lang";
+import { EditorTypeProvider } from "@/lib/editor-type";
 import { RootShell } from "@/components/root/RootShell";
 import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
@@ -85,21 +86,23 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <UiLangProvider>
-        <div className="min-h-screen">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-6 md:grid-cols-12 md:gap-16 md:py-16">
-            <aside className="hidden md:sticky md:top-16 md:col-span-3 md:block md:self-start">
-              <Nav />
-              <div className="mt-12">
-                <WeeklySidebar />
-              </div>
-            </aside>
-            <main className="min-w-0 pb-24 md:col-span-9 md:pb-0">
-              <MobileHeader />
-              <Outlet />
-            </main>
+        <EditorTypeProvider>
+          <div className="min-h-screen">
+            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-6 md:grid-cols-12 md:gap-16 md:py-16">
+              <aside className="hidden md:sticky md:top-16 md:col-span-3 md:block md:self-start">
+                <Nav />
+                <div className="mt-12">
+                  <WeeklySidebar />
+                </div>
+              </aside>
+              <main className="min-w-0 pb-24 md:col-span-9 md:pb-0">
+                <MobileHeader />
+                <Outlet />
+              </main>
+            </div>
+            <MobileTabBar />
           </div>
-          <MobileTabBar />
-        </div>
+        </EditorTypeProvider>
       </UiLangProvider>
     </QueryClientProvider>
   );
