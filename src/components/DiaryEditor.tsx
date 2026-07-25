@@ -12,8 +12,6 @@ import { TYPE_STEPS, useEditorType } from "@/lib/editor-type";
 interface Props {
   loading: boolean;
   onSubmit: (text: string) => void;
-  /** Provided by parent so it can clear the draft after a successful correction. */
-  onExposeClearDraft?: (fn: () => void) => void;
 }
 
 function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: UiLang) {
@@ -28,7 +26,7 @@ function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: UiLang) 
   return "\u00A0";
 }
 
-export function DiaryEditor({ loading, onSubmit, onExposeClearDraft }: Props) {
+export function DiaryEditor({ loading, onSubmit }: Props) {
   const { uiLang } = useUiLang();
   const { typeStep } = useEditorType();
   const [text, setText] = useState("");
@@ -47,14 +45,10 @@ export function DiaryEditor({ loading, onSubmit, onExposeClearDraft }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initial]);
 
-  // Expose clearDraft to parent so it can also reset the editor after submit
-  useEffect(() => {
-    if (!onExposeClearDraft) return;
-    onExposeClearDraft(() => {
-      clear();
-      setText("");
-    });
-  }, [onExposeClearDraft, clear]);
+  const handleClear = () => {
+    clear();
+    setText("");
+  };
 
   useEffect(() => {
     setToday(formatLongDate(new Date(), uiLang));
@@ -103,9 +97,20 @@ export function DiaryEditor({ loading, onSubmit, onExposeClearDraft }: Props) {
       />
 
       <div className="mt-10 flex flex-col items-start justify-between gap-6 border-t border-primary/10 pt-8 sm:flex-row sm:items-center">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground tabular-nums">
-          {text.length} {uiLang === "ko" ? "자" : "chars"}
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground tabular-nums">
+            {text.length} {uiLang === "ko" ? "자" : "chars"}
+          </span>
+          {text.length > 0 && (
+            <button
+              onClick={handleClear}
+              disabled={loading}
+              className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground/70 underline decoration-dotted underline-offset-4 transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {t("clearEntry", uiLang)}
+            </button>
+          )}
+        </div>
         <button
           onClick={() => onSubmit(text)}
           disabled={!canSubmit}
