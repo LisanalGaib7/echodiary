@@ -41,6 +41,7 @@ export const STRINGS = {
     fr: "Écrivez votre journal du jour…",
   },
   correct: { en: "Correct", ko: "교정", ja: "校正", zh: "校对", es: "Corregir", fr: "Corriger" },
+  clearEntry: { en: "Clear", ko: "지우기", ja: "消去", zh: "清除", es: "Borrar", fr: "Effacer" },
   correcting: { en: "Correcting…", ko: "교정 중…", ja: "校正中…", zh: "校对中…", es: "Corrigiendo…", fr: "Correction…" },
   refined: { en: "Refined version", ko: "교정본", ja: "校正後", zh: "润色版本", es: "Versión corregida", fr: "Version corrigée" },
   changes: { en: "Changes", ko: "변경표", ja: "変更点", zh: "修改", es: "Cambios", fr: "Modifications" },

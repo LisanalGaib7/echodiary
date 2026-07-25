@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircle } from "lucide-react";
-import { useRef } from "react";
 import { Toaster } from "sonner";
 import { CorrectionView } from "@/components/CorrectionView";
 import { CorrectionSkeleton } from "@/components/CorrectionSkeleton";
@@ -25,8 +24,7 @@ export const Route = createFileRoute("/")({
 
 function WritePage() {
   const { uiLang } = useUiLang();
-  const clearDraftRef = useRef<() => void>(() => {});
-  const { loading, result, error, submit, retry } = useCorrection(() => clearDraftRef.current());
+  const { loading, result, error, submit, retry } = useCorrection();
 
   return (
     <div className="space-y-16">
@@ -43,13 +41,7 @@ function WritePage() {
 
 
       <div className="reveal" style={{ animationDelay: "180ms" }}>
-        <DiaryEditor
-          loading={loading}
-          onSubmit={submit}
-          onExposeClearDraft={(fn) => {
-            clearDraftRef.current = fn;
-          }}
-        />
+        <DiaryEditor loading={loading} onSubmit={submit} />
       </div>
 
       {loading && (

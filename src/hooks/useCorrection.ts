@@ -8,7 +8,7 @@ import { useUiLang } from "@/lib/ui-lang";
 import { todayISODate, uuid } from "@/lib/format";
 import type { CorrectionResult, Entry } from "@/lib/types";
 
-export function useCorrection(onSuccess?: () => void) {
+export function useCorrection() {
   const { uiLang } = useUiLang();
   const correct = useServerFn(correctEntry);
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,6 @@ export function useCorrection(onSuccess?: () => void) {
         await saveEntry(entry);
         setResult(r);
         toast.success(t("correctionSaved", uiLang));
-        onSuccess?.();
       } catch (e) {
         console.error(e);
         const msg = t("errorOccurred", uiLang);
@@ -50,7 +49,7 @@ export function useCorrection(onSuccess?: () => void) {
         setLoading(false);
       }
     },
-    [correct, uiLang, onSuccess],
+    [correct, uiLang],
   );
 
   const retry = useCallback(() => {
