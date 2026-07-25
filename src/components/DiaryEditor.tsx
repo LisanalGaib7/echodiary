@@ -6,6 +6,8 @@ import { useUiLang } from "@/lib/ui-lang";
 import { t, type UiLang } from "@/lib/i18n";
 import { formatLongDate } from "@/lib/format";
 import { Spinner } from "@/components/ui-common/Spinner";
+import { TypeScale } from "@/components/editor/TypeScale";
+import { TYPE_STEPS, useEditorType } from "@/lib/editor-type";
 
 interface Props {
   loading: boolean;
@@ -28,8 +30,11 @@ function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: UiLang) 
 
 export function DiaryEditor({ loading, onSubmit, onExposeClearDraft }: Props) {
   const { uiLang } = useUiLang();
+  const { typeStep } = useEditorType();
   const [text, setText] = useState("");
-  const textareaRef = useAutoGrowTextarea(text);
+  // metricsKey: font-size/line-height change the box's natural height even
+  // when `text` doesn't, so the grow hook needs to re-measure on it too.
+  const textareaRef = useAutoGrowTextarea(text, typeStep);
   const [today, setToday] = useState("");
   const { initial, status, savedAt, restored, clear } = useDraft(text);
 
@@ -68,16 +73,19 @@ export function DiaryEditor({ loading, onSubmit, onExposeClearDraft }: Props) {
         >
           {today || "\u00A0"}
         </p>
-        <p
-          className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground/80 tabular-nums transition-opacity"
-          aria-live="polite"
-        >
-          {status === "saving" && <Spinner size={10} className="text-muted-foreground/70" />}
-          {status === "saved" && !restored && (
-            <span className="h-1 w-1 rounded-full bg-success/70" aria-hidden />
-          )}
-          {statusLabel(status, savedAt, uiLang)}
-        </p>
+        <div className="flex items-center gap-4">
+          <p
+            className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground/80 tabular-nums transition-opacity"
+            aria-live="polite"
+          >
+            {status === "saving" && <Spinner size={10} className="text-muted-foreground/70" />}
+            {status === "saved" && !restored && (
+              <span className="h-1 w-1 rounded-full bg-success/70" aria-hidden />
+            )}
+            {statusLabel(status, savedAt, uiLang)}
+          </p>
+          <TypeScale />
+        </div>
       </div>
 
       <textarea
@@ -86,7 +94,12 @@ export function DiaryEditor({ loading, onSubmit, onExposeClearDraft }: Props) {
         onChange={(e) => setText(e.target.value)}
         placeholder={t("writePlaceholder", uiLang)}
         rows={6}
-        className="w-full resize-none overflow-hidden bg-transparent font-serif text-2xl leading-snug text-ink outline-none [caret-color:var(--primary)] placeholder:text-primary/25 selection:bg-primary/10 md:text-3xl min-h-[16rem]"
+        className="min-h-[16rem] w-full resize-none overflow-hidden bg-transparent font-serif text-ink outline-none [caret-color:var(--primary)] placeholder:text-primary/25 selection:bg-primary/10"
+        style={{
+          maxWidth: "min(45ch, 100%)", // ~65 prose chars: ch is the "0" glyph, wider than average
+          fontSize: `${TYPE_STEPS[typeStep].fontSize}px`,
+          lineHeight: TYPE_STEPS[typeStep].lineHeight,
+        }}
       />
 
       <div className="mt-10 flex flex-col items-start justify-between gap-6 border-t border-primary/10 pt-8 sm:flex-row sm:items-center">
