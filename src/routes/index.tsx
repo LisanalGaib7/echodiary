@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Toaster } from "sonner";
 import { CorrectionView } from "@/components/CorrectionView";
 import { CorrectionSkeleton } from "@/components/CorrectionSkeleton";
@@ -8,6 +9,9 @@ import { useCorrection } from "@/hooks/useCorrection";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { Spinner } from "@/components/ui-common/Spinner";
+import { getAllEntries } from "@/lib/db";
+import { buildScoreTrend, buildWeeklyCategoryCounts } from "@/lib/insights";
+import type { Entry } from "@/lib/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,6 +29,23 @@ export const Route = createFileRoute("/")({
 function WritePage() {
   const { uiLang } = useUiLang();
   const { loading, result, error, submit, retry } = useCorrection();
+  const [entries, setEntries] = useState<Entry[]>([]);
+
+  // Recent entries power the score trend + "seen N times this week" badges below.
+  // Only needed once a correction lands, and re-fetched each time so a new entry
+  // (already saved by useCorrection before result is set) is reflected immediately.
+  useEffect(() => {
+    if (!result) return;
+    getAllEntries().then(setEntries);
+  }, [result]);
+
+  const trend = useMemo(() => {
+    const current = entries[0];
+    if (!result || !current) return undefined;
+    return buildScoreTrend(entries, current.id, current.language);
+  }, [entries, result]);
+
+  const weeklyCounts = useMemo(() => buildWeeklyCategoryCounts(entries), [entries]);
 
   return (
     <div className="space-y-16">
@@ -38,7 +59,6 @@ function WritePage() {
           Echo <span className="italic font-light">your</span> thoughts.
         </h1>
       </header>
-
 
       <div className="reveal" style={{ animationDelay: "180ms" }}>
         <DiaryEditor loading={loading} onSubmit={submit} />
@@ -81,7 +101,12 @@ function WritePage() {
 
       {result && !loading && (
         <div className="reveal">
-          <CorrectionView result={result} lang={result.language} />
+          <CorrectionView
+            result={result}
+            lang={result.language}
+            trend={trend}
+            weeklyCounts={weeklyCounts}
+          />
         </div>
       )}
     </div>
