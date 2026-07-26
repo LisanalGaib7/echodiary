@@ -17,7 +17,7 @@ function optional(name: string): string | undefined {
 
 export const env = {
   get aiProvider(): AiProvider {
-    return (process.env.AI_PROVIDER as AiProvider | undefined) ?? "lovable";
+    return (process.env.AI_PROVIDER as AiProvider | undefined) ?? "openrouter";
   },
   get lovableApiKey() {
     return optional("LOVABLE_API_KEY");
@@ -39,18 +39,25 @@ export const env = {
   get allowedOrigins(): string[] {
     const raw = optional("ALLOWED_ORIGINS");
     if (!raw) return [];
-    return raw.split(",").map((s) => s.trim()).filter(Boolean);
+    return raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
   },
 };
 
 export function requireAiApiKey(): { provider: AiProvider; key: string } {
   const provider = env.aiProvider;
   const key =
-    provider === "lovable" ? env.lovableApiKey
-    : provider === "openai" ? env.openaiApiKey
-    : provider === "openrouter" ? env.openrouterApiKey
-    : provider === "gemini" ? env.geminiApiKey
-    : undefined;
+    provider === "lovable"
+      ? env.lovableApiKey
+      : provider === "openai"
+        ? env.openaiApiKey
+        : provider === "openrouter"
+          ? env.openrouterApiKey
+          : provider === "gemini"
+            ? env.geminiApiKey
+            : undefined;
   if (!key) throw new Error("AI service unavailable");
   return { provider, key };
 }
