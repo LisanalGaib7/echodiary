@@ -1,15 +1,35 @@
+import type { ReactNode } from "react";
 import type { Change, Lang } from "@/lib/types";
 import { categoryLabel, categorySeverity } from "@/lib/categories";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { STAGGER } from "@/lib/motion";
 import { DiffText } from "./DiffText";
+import { SectionLabel } from "./SectionLabel";
 
 const SEVERITY_VAR: Record<string, string> = {
   core: "var(--cat-core)",
   idiom: "var(--cat-idiom)",
   nit: "var(--cat-nit)",
 };
+
+/** Outlined, no-fill label — serif + uppercase (not font-variant small-caps: Fraunces has no
+ * true small-caps glyphs, so the browser synthesizes them and only the first letter reads at
+ * full size). Same shape used for the category tag and the neutral streak badge. */
+function OutlineLabel({ children, tint }: { children: ReactNode; tint?: string }) {
+  return (
+    <span
+      className="inline-flex items-center whitespace-nowrap rounded-[4px] border px-2 py-[0.26em] font-serif text-[0.7rem] font-semibold uppercase tracking-[0.14em]"
+      style={
+        tint
+          ? { color: tint, borderColor: `color-mix(in oklch, ${tint} 35%, transparent)` }
+          : undefined
+      }
+    >
+      {children}
+    </span>
+  );
+}
 
 function ChangeCard({
   change,
@@ -27,26 +47,23 @@ function ChangeCard({
   const tint = SEVERITY_VAR[severity];
   return (
     <div
-      className="animate-row-highlight flex max-w-[64ch] flex-col gap-2.5 border-t border-border px-5 py-4 first:border-t-0"
+      className="animate-row-highlight border-t border-border px-6 py-4 first:border-t-0"
       style={{ animationDelay: `${index * STAGGER.base}ms` }}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        <span
-          className="category-pill"
-          style={{ color: tint, background: `color-mix(in oklch, ${tint} 14%, transparent)` }}
-        >
-          {categoryLabel(lang, change.category, uiLang)}
-        </span>
-        {streak >= 2 && (
-          <span className="category-pill bg-secondary text-secondary-foreground">
-            {uiLang === "ko"
-              ? `이번 주 ${streak}번째`
-              : `${streak}${streak === 2 ? "nd" : streak === 3 ? "rd" : "th"} time this week`}
-          </span>
-        )}
+      <div className="flex flex-col gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <OutlineLabel tint={tint}>{categoryLabel(lang, change.category, uiLang)}</OutlineLabel>
+          {streak >= 2 && (
+            <OutlineLabel>
+              {uiLang === "ko"
+                ? `이번 주 ${streak}번째`
+                : `${streak}${streak === 2 ? "nd" : streak === 3 ? "rd" : "th"} time this week`}
+            </OutlineLabel>
+          )}
+        </div>
+        <DiffText original={change.original} refined={change.refined} />
+        <p className="max-w-[var(--measure)] text-sm text-muted-foreground">{change.reason}</p>
       </div>
-      <DiffText original={change.original} refined={change.refined} />
-      <p className="text-sm text-muted-foreground">{change.reason}</p>
     </div>
   );
 }
@@ -67,9 +84,9 @@ export function ChangesTable({
 
   return (
     <section className="journal-card overflow-hidden">
-      <h2 className="border-b border-border px-6 py-4 text-lg font-semibold">
-        {t("changes", uiLang)}
-      </h2>
+      <div className="px-6 pb-2 pt-6">
+        <SectionLabel>{t("changes", uiLang)}</SectionLabel>
+      </div>
       {changes.length === 0 ? (
         <p className="px-6 py-8 text-center text-muted-foreground">{t("noChanges", uiLang)}</p>
       ) : (
@@ -86,7 +103,7 @@ export function ChangesTable({
 
           {nits.length > 0 && (
             <details className="border-t border-border">
-              <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-xs font-medium text-muted-foreground marker:content-none [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center gap-2 px-6 py-3 text-xs font-medium text-muted-foreground marker:content-none [&::-webkit-details-marker]:hidden">
                 <span aria-hidden style={{ color: SEVERITY_VAR.nit }}>
                   +
                 </span>
@@ -94,19 +111,13 @@ export function ChangesTable({
                   ? `사소한 수정 ${nits.length}건`
                   : `${nits.length} minor ${nits.length === 1 ? "fix" : "fixes"}`}
               </summary>
-              <div className="flex max-w-[64ch] flex-col gap-3 px-5 pb-4 pl-10">
+              <div className="flex flex-col gap-3 px-6 pb-4">
                 {nits.map((c, i) => (
                   <div key={i} className="flex flex-col gap-1">
-                    <span
-                      className="category-pill w-fit"
-                      style={{
-                        color: SEVERITY_VAR.nit,
-                        background: `color-mix(in oklch, ${SEVERITY_VAR.nit} 14%, transparent)`,
-                      }}
-                    >
+                    <OutlineLabel tint={SEVERITY_VAR.nit}>
                       {categoryLabel(lang, c.category, uiLang)}
-                    </span>
-                    <div className="text-[0.92rem]">
+                    </OutlineLabel>
+                    <div className="max-w-[var(--measure)] text-[0.92rem]">
                       <DiffText original={c.original} refined={c.refined} />
                     </div>
                   </div>
