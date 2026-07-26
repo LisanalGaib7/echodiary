@@ -1,5 +1,6 @@
 import type { Entry } from "@/lib/types";
 import { CorrectionView } from "@/components/CorrectionView";
+import { SectionLabel } from "@/components/correction/SectionLabel";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 
@@ -33,10 +34,8 @@ export function HistoryDetail({ entry, onBack, onDelete }: Props) {
             {t("delete", uiLang)}
           </button>
         </div>
-        <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-          {t("original", uiLang)}
-        </h2>
-        <p className="whitespace-pre-wrap font-serif text-base leading-relaxed">
+        <SectionLabel>{t("original", uiLang)}</SectionLabel>
+        <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-serif text-[1.0625rem] leading-[1.7]">
           {entry.originalText}
         </p>
       </div>

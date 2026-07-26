@@ -44,6 +44,10 @@
 
 :root {
   --radius: 0.75rem;
+  /* One absolute measure for correction-view prose. `ch` drifts between the
+     serif body and sans reason text (68ch is ~709px in Georgia/Fraunces but
+     ~524px in system-ui), so this stays a fixed length, not a font-relative unit. */
+  --measure: 44rem;
   /* Warm "journal paper" palette */
   --paper: oklch(0.985 0.012 85);
   --ink: oklch(0.22 0.02 60);
@@ -167,21 +171,6 @@
     0 12px 40px -20px oklch(from var(--primary) l c h / 0.10);
 }
 
-
-@utility category-pill {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  min-height: 28px;
-  padding-inline: 12px;
-  padding-block: 4px;
-  border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  font-variant-caps: small-caps;
-  line-height: 1;
-}
 
 @utility score-text {
   font-family: var(--font-serif);
