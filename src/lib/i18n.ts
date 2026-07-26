@@ -155,6 +155,14 @@ export const STRINGS = {
     es: "Áreas de mejora",
     fr: "À améliorer",
   },
+  trendEmpty: {
+    en: "Write a few more entries to see your score trend here.",
+    ko: "일기를 몇 편 더 쓰면 이 자리에 점수 추이가 나타나요.",
+    ja: "もう数件書くと、ここにスコアの推移が表示されます。",
+    zh: "再写几篇日记,这里就会显示分数趋势。",
+    es: "Escribe algunas entradas más para ver aquí tu tendencia de puntuación.",
+    fr: "Écrivez encore quelques entrées pour voir votre tendance de score ici.",
+  },
   focusTitle: {
     en: "Focus for next time",
     ko: "이번에 고칠 하나",

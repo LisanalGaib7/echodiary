@@ -5,7 +5,7 @@ import { t } from "@/lib/i18n";
 import { STAGGER } from "@/lib/motion";
 import { DiffText } from "./DiffText";
 
-const RAIL_VAR: Record<string, string> = {
+const SEVERITY_VAR: Record<string, string> = {
   core: "var(--cat-core)",
   idiom: "var(--cat-idiom)",
   nit: "var(--cat-nit)",
@@ -24,37 +24,29 @@ function ChangeCard({
 }) {
   const { uiLang } = useUiLang();
   const severity = categorySeverity(lang, change.category);
+  const tint = SEVERITY_VAR[severity];
   return (
     <div
-      className="animate-row-highlight grid grid-cols-[3px_1fr] border-t border-border first:border-t-0"
+      className="animate-row-highlight flex max-w-[64ch] flex-col gap-2.5 border-t border-border px-5 py-4 first:border-t-0"
       style={{ animationDelay: `${index * STAGGER.base}ms` }}
     >
-      <div style={{ background: RAIL_VAR[severity] }} />
-      <div className="flex flex-col gap-2.5 px-5 py-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span
-            className="font-mono text-[0.66rem] font-semibold uppercase tracking-[0.11em]"
-            style={{ color: RAIL_VAR[severity] }}
-          >
-            {categoryLabel(lang, change.category, uiLang)}
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className="category-pill"
+          style={{ color: tint, background: `color-mix(in oklch, ${tint} 14%, transparent)` }}
+        >
+          {categoryLabel(lang, change.category, uiLang)}
+        </span>
+        {streak >= 2 && (
+          <span className="category-pill bg-secondary text-secondary-foreground">
+            {uiLang === "ko"
+              ? `이번 주 ${streak}번째`
+              : `${streak}${streak === 2 ? "nd" : streak === 3 ? "rd" : "th"} time this week`}
           </span>
-          {streak >= 2 && (
-            <span
-              className="rounded-full px-2.5 py-0.5 font-mono text-[0.63rem] tracking-[0.06em]"
-              style={{
-                color: RAIL_VAR[severity],
-                background: `color-mix(in oklch, ${RAIL_VAR[severity]} 12%, transparent)`,
-              }}
-            >
-              {uiLang === "ko"
-                ? `이번 주 ${streak}번째`
-                : `${streak}${streak === 2 ? "nd" : streak === 3 ? "rd" : "th"} time this week`}
-            </span>
-          )}
-        </div>
-        <DiffText original={change.original} refined={change.refined} />
-        <p className="max-w-[60ch] text-sm text-muted-foreground">{change.reason}</p>
+        )}
       </div>
+      <DiffText original={change.original} refined={change.refined} />
+      <p className="text-sm text-muted-foreground">{change.reason}</p>
     </div>
   );
 }
@@ -94,20 +86,23 @@ export function ChangesTable({
 
           {nits.length > 0 && (
             <details className="border-t border-border">
-              <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3 font-mono text-[0.7rem] uppercase tracking-[0.1em] text-muted-foreground marker:content-none [&::-webkit-details-marker]:hidden">
-                <span aria-hidden style={{ color: RAIL_VAR.nit }}>
+              <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-3 text-xs font-medium text-muted-foreground marker:content-none [&::-webkit-details-marker]:hidden">
+                <span aria-hidden style={{ color: SEVERITY_VAR.nit }}>
                   +
                 </span>
                 {uiLang === "ko"
                   ? `사소한 수정 ${nits.length}건`
                   : `${nits.length} minor ${nits.length === 1 ? "fix" : "fixes"}`}
               </summary>
-              <div className="flex flex-col gap-2.5 px-5 pb-4 pl-10">
+              <div className="flex max-w-[64ch] flex-col gap-3 px-5 pb-4 pl-10">
                 {nits.map((c, i) => (
-                  <div key={i} className="flex flex-wrap items-baseline gap-2">
+                  <div key={i} className="flex flex-col gap-1">
                     <span
-                      className="font-mono text-[0.63rem] font-semibold uppercase tracking-[0.08em]"
-                      style={{ color: RAIL_VAR.nit }}
+                      className="category-pill w-fit"
+                      style={{
+                        color: SEVERITY_VAR.nit,
+                        background: `color-mix(in oklch, ${SEVERITY_VAR.nit} 14%, transparent)`,
+                      }}
                     >
                       {categoryLabel(lang, c.category, uiLang)}
                     </span>
