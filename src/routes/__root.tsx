@@ -37,17 +37,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Write a diary in English or Korean and get native-level corrections, scores, and pattern reports.",
       },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c2ddd336-1069-4821-af1f-34d28c82fc11/id-preview-fef39d7c--e097aac5-294b-43f2-b651-6f38c5cb2375.lovable.app-1781788594422.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c2ddd336-1069-4821-af1f-34d28c82fc11/id-preview-fef39d7c--e097aac5-294b-43f2-b651-6f38c5cb2375.lovable.app-1781788594422.png",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:type", content: "website" },
     ],
     links: [
