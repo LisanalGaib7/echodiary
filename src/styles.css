@@ -48,15 +48,17 @@
      serif body and sans reason text (68ch is ~709px in Georgia/Fraunces but
      ~524px in system-ui), so this stays a fixed length, not a font-relative unit. */
   --measure: 44rem;
-  /* Warm "journal paper" palette */
-  --paper: oklch(0.985 0.012 85);
+  /* Warm "journal paper" palette. Card and background carry the same faint
+     warmth so the card reads as paper resting on a desk, not a cutout —
+     matching the relationship .dark already has between its own two tokens. */
+  --paper: oklch(0.966 0.017 85);
   --ink: oklch(0.22 0.02 60);
 
-  --background: oklch(0.985 0.012 85);
+  --background: oklch(0.966 0.017 85);
   --foreground: oklch(0.22 0.02 60);
-  --card: oklch(1 0 0);
+  --card: oklch(0.996 0.008 85);
   --card-foreground: oklch(0.22 0.02 60);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.996 0.008 85);
   --popover-foreground: oklch(0.22 0.02 60);
   --primary: oklch(0.42 0.13 32);              /* terracotta */
   --primary-foreground: oklch(0.985 0.012 85);

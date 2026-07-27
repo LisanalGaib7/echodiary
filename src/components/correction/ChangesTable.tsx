@@ -13,16 +13,24 @@ const SEVERITY_VAR: Record<string, string> = {
   nit: "var(--cat-nit)",
 };
 
-/** Outlined, no-fill label — serif + uppercase (not font-variant small-caps: Fraunces has no
- * true small-caps glyphs, so the browser synthesizes them and only the first letter reads at
- * full size). Same shape used for the category tag and the neutral streak badge. */
+/** Outlined label with a faint tint wash — serif + uppercase (not font-variant small-caps:
+ * Fraunces has no true small-caps glyphs, so the browser synthesizes them and only the first
+ * letter reads at full size). Same shape used for the category tag and the neutral streak
+ * badge; the wash keeps it from reading as an empty outline without tipping back into the
+ * saturated filled-pill look. */
 function OutlineLabel({ children, tint }: { children: ReactNode; tint?: string }) {
   return (
     <span
-      className="inline-flex items-center whitespace-nowrap rounded-[4px] border px-2 py-[0.26em] font-serif text-[0.7rem] font-semibold uppercase tracking-[0.14em]"
+      className={`inline-flex items-center whitespace-nowrap rounded-[4px] border px-2 py-[0.26em] font-serif text-[0.7rem] font-semibold uppercase tracking-[0.14em] ${
+        tint ? "" : "bg-secondary/40"
+      }`}
       style={
         tint
-          ? { color: tint, borderColor: `color-mix(in oklch, ${tint} 35%, transparent)` }
+          ? {
+              color: tint,
+              borderColor: `color-mix(in oklch, ${tint} 35%, transparent)`,
+              background: `color-mix(in oklch, ${tint} 10%, transparent)`,
+            }
           : undefined
       }
     >
