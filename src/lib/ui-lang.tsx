@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { UiLang } from "@/lib/i18n";
+import { UI_LANGS, type UiLang } from "@/lib/i18n";
 
 interface Ctx {
   uiLang: UiLang;
@@ -8,13 +8,25 @@ interface Ctx {
 
 const UiLangContext = createContext<Ctx>({ uiLang: "en", setUiLang: () => {} });
 
+const UI_LANG_VALUES = UI_LANGS.map((l) => l.value);
+
+/** Best-effort guess for a first-time visitor only — an explicit stored
+ *  choice always wins over this, see the effect below. */
+function detectBrowserUiLang(): UiLang {
+  if (typeof navigator === "undefined") return "en";
+  const primary = navigator.language?.split("-")[0];
+  return UI_LANG_VALUES.includes(primary as UiLang) ? (primary as UiLang) : "en";
+}
+
 export function UiLangProvider({ children }: { children: ReactNode }) {
   const [uiLang, setUiLangState] = useState<UiLang>("en");
 
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem("echo.uiLang") : null;
-    if (stored && ["en", "ko", "ja", "zh", "es", "fr"].includes(stored)) {
+    if (stored && UI_LANG_VALUES.includes(stored as UiLang)) {
       setUiLangState(stored as UiLang);
+    } else {
+      setUiLangState(detectBrowserUiLang());
     }
   }, []);
 

@@ -11,20 +11,29 @@ import { verifyTurnstile } from "./security/turnstile.server";
 import { categoryCodes } from "./categories";
 import type { CorrectionResult } from "./types";
 
-
 const InputSchema = z.object({
   text: z.string().min(1).max(8000),
   captchaToken: z.string().optional(),
+  explainLang: z.enum(["en", "ko"]).optional(),
 });
 
 const enCodes = categoryCodes("en").join(", ");
 const koCodes = categoryCodes("ko").join(", ");
 
-const SYSTEM_PROMPT = `You are a strict but kind native-language diary editor.
+const EXPLAIN_LANG_NAME: Record<"en" | "ko", string> = { en: "English", ko: "Korean" };
+
+function buildSystemPrompt(explainLang?: "en" | "ko"): string {
+  // Default (no explainLang): explanatory text matches the diary's own
+  // language, same as before this setting existed.
+  const explainRule = explainLang
+    ? `"reason", "strengths", and "improvements" must be written in ${EXPLAIN_LANG_NAME[explainLang]}, regardless of the diary's language. Any quoted snippet inside them still stays in the diary's own language — translate the surrounding explanation, never the quote.`
+    : `"reason", "strengths", and "improvements" must be written in the SAME language as the diary.`;
+
+  return `You are a strict but kind native-language diary editor.
 
 TASK:
 1. Detect the language of the user's diary entry. It is either English ("en") or Korean ("ko"). Never translate to another language.
-2. Produce a refined version that reads as a native speaker would write it — natural, idiomatic, fluent. Preserve the writer's voice and meaning.
+2. Produce a refined version that reads as a native speaker would write it — natural, idiomatic, fluent. Preserve the writer's voice and meaning. "refinedText" and every "original"/"refined" snippet in "changes" always stay in the diary's own language.
 3. List every meaningful change as a row: original snippet → refined snippet → reason → category code.
 4. Score the ORIGINAL text on a native-speaker scale of 0–10 (10 = fully native-quality), and give sub-scores for accuracy, naturalness, vocabulary, structure. Include short "strengths" and "improvements" notes.
 
@@ -35,11 +44,11 @@ CATEGORY CODES (pick ONLY from the set for the detected language):
 OUTPUT RULES:
 - Return ONLY valid JSON. No prose, no markdown, no code fences.
 - If no changes are needed, return "changes": [] and "refinedText" equal to the original input.
-- "strengths" and "improvements" must be written in the SAME language as the diary.
+- ${explainRule}
 
 VOICE FOR "strengths" AND "improvements":
 Write like a native-speaking writing coach giving personal, editorial feedback — not a generic AI summary.
-- ALWAYS quote or reference at least one specific phrase from the user's original text (use quotation marks around the quoted snippet, in the diary's language).
+- ALWAYS quote or reference at least one specific phrase from the user's original text (use quotation marks around the quoted snippet, in the diary's language, even when the surrounding sentence is in a different language).
 - Explain the linguistic reason behind the observation (e.g. why a particular article is wrong, what a word choice signals to a native reader, what register a phrase carries).
 - "strengths": name exactly what the writer did well and why it works in native usage — tie it to a specific phrase they wrote.
 - "improvements": point to a specific pattern or recurring tendency you observed in THIS entry, not a vague suggestion. Reference the concrete phrase that exemplifies it.
@@ -59,6 +68,7 @@ JSON SHAPE (exact keys):
     "improvements": string
   }
 }`;
+}
 
 const ResultSchema = z.object({
   language: z.enum(["en", "ko"]),
@@ -69,7 +79,7 @@ const ResultSchema = z.object({
       refined: z.string(),
       reason: z.string(),
       category: z.string(),
-    })
+    }),
   ),
   overall: z.object({
     score: z.number(),
@@ -100,9 +110,10 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const rateLimitBuckets = new Map<string, { count: number; resetAt: number }>();
 
 function getClientIp(req: Request): string {
-  const fwd = req.headers.get("cf-connecting-ip")
-    ?? req.headers.get("x-real-ip")
-    ?? req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const fwd =
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-real-ip") ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   return fwd || "unknown";
 }
 
@@ -132,7 +143,7 @@ export const correctEntry = createServerFn({ method: "POST" })
     const model = getAiModel();
     const { text } = await generateText({
       model,
-      system: SYSTEM_PROMPT,
+      system: buildSystemPrompt(data.explainLang),
       prompt: data.text,
     });
 
