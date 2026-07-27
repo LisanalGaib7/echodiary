@@ -9,6 +9,15 @@ export const UI_LANGS: { value: UiLang; label: string }[] = [
   { value: "fr", label: "Français" },
 ];
 
+/** Language the AI writes reason/strengths/improvements in — separate from
+ *  refinedText, which always stays in the diary's own language. */
+export type ExplainLang = "en" | "ko";
+
+export const EXPLAIN_LANGS: { value: ExplainLang; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "ko", label: "한국어" },
+];
+
 export const STRINGS = {
   appName: { en: "Echo", ko: "Echo", ja: "Echo", zh: "Echo", es: "Echo", fr: "Echo" },
   tagline: {
@@ -52,6 +61,30 @@ export const STRINGS = {
     zh: "选择 Echo 界面使用的语言。",
     es: "Elige el idioma de la interfaz de Echo.",
     fr: "Choisissez la langue de l'interface d'Echo.",
+  },
+  explainLanguage: {
+    en: "Explanation language",
+    ko: "해설 언어",
+    ja: "解説の言語",
+    zh: "讲解语言",
+    es: "Idioma de las explicaciones",
+    fr: "Langue des explications",
+  },
+  explainLanguageDesc: {
+    en: "Choose the language for reasons, strengths, and improvement notes. Your refined text and diff always stay in the diary's own language.",
+    ko: "수정 이유·강점·개선점 해설에 사용할 언어를 선택하세요. 교정문과 변경 표시는 항상 일기 작성 언어로 유지됩니다.",
+    ja: "理由・強み・改善点の解説に使う言語を選んでください。添削文と差分は常に日記の言語のまま表示されます。",
+    zh: "选择修改理由、优点和改进建议的讲解语言。润色后的文本和修改标记始终保持日记原本的语言。",
+    es: "Elige el idioma para los motivos, fortalezas y notas de mejora. El texto corregido y los cambios siempre permanecen en el idioma original del diario.",
+    fr: "Choisissez la langue des explications (raisons, points forts, axes d'amélioration). Le texte corrigé et les modifications restent toujours dans la langue du journal.",
+  },
+  explainLanguageNote: {
+    en: "Already-saved entries keep the explanation language they were written with.",
+    ko: "이미 저장된 기록은 작성 당시의 해설 언어로 남습니다.",
+    ja: "保存済みの記録は作成時の解説言語のまま残ります。",
+    zh: "已保存的记录会保留写入时的讲解语言。",
+    es: "Las entradas ya guardadas conservan el idioma de explicación con el que se crearon.",
+    fr: "Les entrées déjà enregistrées conservent la langue d'explication utilisée lors de leur création.",
   },
   writePlaceholder: {
     en: "Write today's diary in English or Korean…",

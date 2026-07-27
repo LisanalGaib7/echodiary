@@ -5,11 +5,13 @@ import { correctEntry } from "@/lib/correction.functions";
 import { saveEntry } from "@/lib/db";
 import { t } from "@/lib/i18n";
 import { useUiLang } from "@/lib/ui-lang";
+import { useExplainLang } from "@/lib/explain-lang";
 import { todayISODate, uuid } from "@/lib/format";
 import type { CorrectionResult, Entry } from "@/lib/types";
 
 export function useCorrection() {
   const { uiLang } = useUiLang();
+  const { explainLang } = useExplainLang();
   const correct = useServerFn(correctEntry);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CorrectionResult | null>(null);
@@ -27,7 +29,7 @@ export function useCorrection() {
       setResult(null);
       setError(null);
       try {
-        const r = await correct({ data: { text } });
+        const r = await correct({ data: { text, explainLang } });
         const now = new Date();
         const entry: Entry = {
           ...r,
@@ -49,7 +51,7 @@ export function useCorrection() {
         setLoading(false);
       }
     },
-    [correct, uiLang],
+    [correct, uiLang, explainLang],
   );
 
   const retry = useCallback(() => {
