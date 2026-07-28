@@ -18,12 +18,12 @@ export function HistoryDetail({ entry, onBack, onDelete }: Props) {
         ← {t("back", uiLang)}
       </button>
       <div className="journal-card p-6">
-        <div className="mb-3 flex items-center justify-between">
-          <div>
-            <div className="text-xs uppercase tracking-wide text-muted-foreground">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs uppercase tracking-wide text-muted-foreground">
               {entry.date}
-            </div>
-            <span className="mt-1 inline-block rounded-full bg-secondary px-2 py-0.5 text-xs font-medium">
+            </span>
+            <span className="inline-block rounded-full bg-secondary px-2 py-0.5 text-xs font-medium">
               {entry.language.toUpperCase()}
             </span>
           </div>
