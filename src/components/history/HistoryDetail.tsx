@@ -39,7 +39,12 @@ export function HistoryDetail({ entry, onBack, onDelete }: Props) {
           {entry.originalText}
         </p>
       </div>
-      <CorrectionView result={entry} lang={entry.language} />
+      <CorrectionView
+        result={entry}
+        lang={entry.language}
+        entryId={entry.id}
+        entryDate={entry.date}
+      />
     </div>
   );
 }

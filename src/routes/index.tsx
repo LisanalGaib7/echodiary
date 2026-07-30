@@ -106,6 +106,8 @@ function WritePage() {
             lang={result.language}
             trend={trend}
             weeklyCounts={weeklyCounts}
+            entryId={result.id}
+            entryDate={result.date}
           />
         </div>
       )}

@@ -27,13 +27,36 @@ export function Nav() {
         >
           {t("navWrite", uiLang)}
         </Link>
-        <Link to="/history" preload="intent" className={base} activeProps={{ className: `${base} ${active}` }}>
+        <Link
+          to="/history"
+          preload="intent"
+          className={base}
+          activeProps={{ className: `${base} ${active}` }}
+        >
           {t("navHistory", uiLang)}
         </Link>
-        <Link to="/report" preload="intent" className={base} activeProps={{ className: `${base} ${active}` }}>
+        <Link
+          to="/saved"
+          preload="intent"
+          className={base}
+          activeProps={{ className: `${base} ${active}` }}
+        >
+          {t("navSaved", uiLang)}
+        </Link>
+        <Link
+          to="/report"
+          preload="intent"
+          className={base}
+          activeProps={{ className: `${base} ${active}` }}
+        >
           {t("navReport", uiLang)}
         </Link>
-        <Link to="/settings" preload="intent" className={base} activeProps={{ className: `${base} ${active}` }}>
+        <Link
+          to="/settings"
+          preload="intent"
+          className={base}
+          activeProps={{ className: `${base} ${active}` }}
+        >
           {t("navSettings", uiLang)}
         </Link>
       </div>

@@ -10,12 +10,21 @@ interface Props {
   /** Only available on the Write page, where recent entries are already on hand. */
   trend?: ScoreTrend;
   weeklyCounts?: Record<string, number>;
+  /** Identifies the saved entry so a selected phrase in RefinedSection can be
+   *  saved with a back-reference. Omitted while a correction is in flight. */
+  entryId?: string;
+  entryDate?: string;
 }
 
-export function CorrectionView({ result, lang, trend, weeklyCounts }: Props) {
+export function CorrectionView({ result, lang, trend, weeklyCounts, entryId, entryDate }: Props) {
   return (
     <div className="space-y-6">
-      <RefinedSection text={result.refinedText} />
+      <RefinedSection
+        text={result.refinedText}
+        entryId={entryId}
+        entryDate={entryDate}
+        language={lang}
+      />
       <ChangesTable changes={result.changes} lang={lang} weeklyCounts={weeklyCounts} />
       <OverallSection overall={result.overall} trend={trend} />
     </div>
