@@ -6,6 +6,7 @@ import { t } from "@/lib/i18n";
 import { STAGGER } from "@/lib/motion";
 import { DiffText } from "./DiffText";
 import { SectionLabel } from "./SectionLabel";
+import { SaveSelectionPopover } from "./SaveSelectionPopover";
 
 const SEVERITY_VAR: Record<string, string> = {
   core: "var(--cat-core)",
@@ -39,20 +40,29 @@ function OutlineLabel({ children, tint }: { children: ReactNode; tint?: string }
   );
 }
 
+interface SaveContext {
+  entryId: string;
+  entryDate: string;
+  refinedText: string;
+}
+
 function ChangeCard({
   change,
   lang,
   streak,
   index,
+  saveContext,
 }: {
   change: Change;
   lang: Lang;
   streak: number;
   index: number;
+  saveContext?: SaveContext;
 }) {
   const { uiLang } = useUiLang();
   const severity = categorySeverity(lang, change.category);
   const tint = SEVERITY_VAR[severity];
+  const diff = <DiffText original={change.original} refined={change.refined} />;
   return (
     <div
       className="animate-row-highlight border-t border-border px-6 py-4 first:border-t-0"
@@ -69,7 +79,18 @@ function ChangeCard({
             </OutlineLabel>
           )}
         </div>
-        <DiffText original={change.original} refined={change.refined} />
+        {saveContext ? (
+          <SaveSelectionPopover
+            context={saveContext.refinedText}
+            entryId={saveContext.entryId}
+            entryDate={saveContext.entryDate}
+            language={lang}
+          >
+            {diff}
+          </SaveSelectionPopover>
+        ) : (
+          diff
+        )}
         <p className="max-w-[var(--measure)] text-sm text-muted-foreground">{change.reason}</p>
       </div>
     </div>
@@ -80,12 +101,22 @@ export function ChangesTable({
   changes,
   lang,
   weeklyCounts = {},
+  entryId,
+  entryDate,
+  refinedText,
 }: {
   changes: Change[];
   lang: Lang;
   weeklyCounts?: Record<string, number>;
+  /** Present once the entry is saved; enables drag-select-to-save on each
+   *  change's diff text. Omitted while a correction is still in flight. */
+  entryId?: string;
+  entryDate?: string;
+  refinedText?: string;
 }) {
   const { uiLang } = useUiLang();
+  const saveContext =
+    entryId && entryDate && refinedText ? { entryId, entryDate, refinedText } : undefined;
 
   const main = changes.filter((c) => categorySeverity(lang, c.category) !== "nit");
   const nits = changes.filter((c) => categorySeverity(lang, c.category) === "nit");
@@ -106,6 +137,7 @@ export function ChangesTable({
               lang={lang}
               streak={weeklyCounts[c.category] ?? 0}
               index={i}
+              saveContext={saveContext}
             />
           ))}
 
@@ -120,16 +152,30 @@ export function ChangesTable({
                   : `${nits.length} minor ${nits.length === 1 ? "fix" : "fixes"}`}
               </summary>
               <div className="flex flex-col gap-3 px-6 pb-4">
-                {nits.map((c, i) => (
-                  <div key={i} className="flex flex-col gap-1">
-                    <OutlineLabel tint={SEVERITY_VAR.nit}>
-                      {categoryLabel(lang, c.category, uiLang)}
-                    </OutlineLabel>
-                    <div className="max-w-[var(--measure)] text-[0.92rem]">
-                      <DiffText original={c.original} refined={c.refined} />
+                {nits.map((c, i) => {
+                  const diff = <DiffText original={c.original} refined={c.refined} />;
+                  return (
+                    <div key={i} className="flex flex-col gap-1">
+                      <OutlineLabel tint={SEVERITY_VAR.nit}>
+                        {categoryLabel(lang, c.category, uiLang)}
+                      </OutlineLabel>
+                      <div className="max-w-[var(--measure)] text-[0.92rem]">
+                        {saveContext ? (
+                          <SaveSelectionPopover
+                            context={saveContext.refinedText}
+                            entryId={saveContext.entryId}
+                            entryDate={saveContext.entryDate}
+                            language={lang}
+                          >
+                            {diff}
+                          </SaveSelectionPopover>
+                        ) : (
+                          diff
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </details>
           )}

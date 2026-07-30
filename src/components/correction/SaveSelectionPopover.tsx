@@ -50,7 +50,14 @@ export function SaveSelectionPopover({ children, context, language, entryId, ent
         setPopover(null);
         return;
       }
-      const selectedText = sel.toString().trim();
+      // A selection dragged across a Changes diff spans <del> (the user's
+      // original mistake) and <ins> (the fix) with no separator between them
+      // — sel.toString() would read "I amI'm". Strip <del> content from a
+      // clone so only the corrected/kept text is ever saved. No-op for plain
+      // prose (Refined text has no <del>/<ins>).
+      const frag = range.cloneContents();
+      frag.querySelectorAll("del").forEach((d) => d.remove());
+      const selectedText = (frag.textContent ?? "").trim();
       if (!selectedText) {
         setPopover(null);
         return;
