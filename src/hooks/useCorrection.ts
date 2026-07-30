@@ -7,14 +7,17 @@ import { t } from "@/lib/i18n";
 import { useUiLang } from "@/lib/ui-lang";
 import { useExplainLang } from "@/lib/explain-lang";
 import { todayISODate, uuid } from "@/lib/format";
-import type { CorrectionResult, Entry } from "@/lib/types";
+import type { Entry } from "@/lib/types";
 
 export function useCorrection() {
   const { uiLang } = useUiLang();
   const { explainLang } = useExplainLang();
   const correct = useServerFn(correctEntry);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<CorrectionResult | null>(null);
+  // Holds the full saved Entry (not just the raw CorrectionResult) so callers
+  // have `id`/`date` for anything keyed to the saved entry — e.g. saving a
+  // selected phrase from the Refined text needs entryId/entryDate.
+  const [result, setResult] = useState<Entry | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastText, setLastText] = useState<string>("");
 
@@ -40,7 +43,7 @@ export function useCorrection() {
           updatedAt: now.toISOString(),
         };
         await saveEntry(entry);
-        setResult(r);
+        setResult(entry);
         toast.success(t("correctionSaved", uiLang));
       } catch (e) {
         console.error(e);
