@@ -25,7 +25,14 @@ export function CorrectionView({ result, lang, trend, weeklyCounts, entryId, ent
         entryDate={entryDate}
         language={lang}
       />
-      <ChangesTable changes={result.changes} lang={lang} weeklyCounts={weeklyCounts} />
+      <ChangesTable
+        changes={result.changes}
+        lang={lang}
+        weeklyCounts={weeklyCounts}
+        entryId={entryId}
+        entryDate={entryDate}
+        refinedText={result.refinedText}
+      />
       <OverallSection overall={result.overall} trend={trend} />
     </div>
   );
