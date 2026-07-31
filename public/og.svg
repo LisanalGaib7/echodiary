@@ -1,0 +1,27 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#f9f3e7"/>
+
+  <!-- left: English diary, corrected within English -->
+  <rect x="70" y="80" width="500" height="290" rx="16" fill="#fffdf8" stroke="#ded6c9" stroke-width="2"/>
+  <text x="100" y="130" font-family="Inter" font-size="15" font-weight="700" letter-spacing="2" fill="#852919">WRITE IN ENGLISH</text>
+  <text x="100" y="196" font-family="Fraunces" font-size="26" fill="#727c86" text-decoration="line-through">I am go to school</text>
+  <text x="100" y="238" font-family="Fraunces" font-weight="600" font-size="26" fill="#852919">I'm going to school</text>
+  <text x="100" y="290" font-family="Inter" font-size="16" fill="#6b6157">Present progressive needs "-ing,"</text>
+  <text x="100" y="314" font-family="Inter" font-size="16" fill="#6b6157">not the bare verb after "am."</text>
+
+  <!-- right: Korean diary, corrected within Korean -->
+  <rect x="630" y="80" width="500" height="290" rx="16" fill="#fffdf8" stroke="#ded6c9" stroke-width="2"/>
+  <text x="660" y="130" font-family="Inter" font-size="15" font-weight="700" letter-spacing="2" fill="#852919">WRITE IN KOREAN</text>
+  <text x="660" y="196" font-family="Noto Serif KR" font-size="26" fill="#727c86" text-decoration="line-through">저는 학교 가다</text>
+  <text x="660" y="238" font-family="Noto Serif KR" font-weight="600" font-size="26" fill="#852919">저는 학교에 가요</text>
+  <text x="660" y="290" font-family="Inter, Noto Sans KR" font-size="16" fill="#6b6157">Adds the particle <tspan font-family="Noto Sans KR">에</tspan> and matches the</text>
+  <text x="660" y="314" font-family="Inter, Noto Sans KR" font-size="16" fill="#6b6157">polite <tspan font-family="Noto Sans KR">요</tspan> ending used in speech.</text>
+
+  <!-- center seam: spiral echo mark bridging both cards -->
+  <circle cx="600" cy="225" r="34" fill="#852919"/>
+  <path d="M 605.10 227.40 L 605.42 228.48 L 605.27 229.76 L 604.57 231.03 L 603.32 232.05 L 601.63 232.59 L 599.69 232.48 L 597.76 231.61 L 596.14 229.99 L 595.12 227.76 L 594.94 225.14 L 595.73 222.45 L 597.50 220.07 L 600.13 218.36 L 603.36 217.62 L 606.82 218.05 L 610.07 219.73 L 612.67 222.54 L 614.21 226.24 L 614.41 230.41 L 613.12 234.56 L 610.38 238.16 L 606.44 240.71 L 601.69 241.80 L 596.69 241.19 L 592.03 238.84 L 588.34 234.92 L 586.12 229.81 L 585.76 224.09 L 587.41 218.42 L 590.99 213.50 L 596.17 209.99 L 602.40 208.40"
+        stroke="#fffdf8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <text x="90" y="480" font-family="Fraunces" font-size="56" font-weight="500" fill="#221811">echo<tspan font-style="italic">diary</tspan></text>
+  <text x="94" y="520" font-family="Inter" font-size="24" fill="#6b6157">Native-level corrections, in the language you wrote.</text>
+</svg>
