@@ -1,8 +1,9 @@
-import type { CorrectionResult, Lang } from "@/lib/types";
+import type { CorrectionResult, Entry, Lang } from "@/lib/types";
 import type { ScoreTrend } from "@/lib/insights";
 import { RefinedSection } from "./correction/RefinedSection";
 import { ChangesTable } from "./correction/ChangesTable";
 import { OverallSection } from "./correction/OverallSection";
+import { MissionVerdict } from "./correction/MissionVerdict";
 
 interface Props {
   result: CorrectionResult;
@@ -14,11 +15,21 @@ interface Props {
    *  saved with a back-reference. Omitted while a correction is in flight. */
   entryId?: string;
   entryDate?: string;
+  mission?: Entry["mission"];
 }
 
-export function CorrectionView({ result, lang, trend, weeklyCounts, entryId, entryDate }: Props) {
+export function CorrectionView({
+  result,
+  lang,
+  trend,
+  weeklyCounts,
+  entryId,
+  entryDate,
+  mission,
+}: Props) {
   return (
     <div className="space-y-6">
+      {mission && <MissionVerdict mission={mission} lang={lang} />}
       <RefinedSection
         text={result.refinedText}
         entryId={entryId}

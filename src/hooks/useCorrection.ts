@@ -7,6 +7,7 @@ import { t } from "@/lib/i18n";
 import { useUiLang } from "@/lib/ui-lang";
 import { useExplainLang } from "@/lib/explain-lang";
 import { todayISODate, uuid } from "@/lib/format";
+import { judgeMission, type Mission } from "@/lib/missions";
 import type { Entry } from "@/lib/types";
 
 export function useCorrection() {
@@ -21,13 +22,16 @@ export function useCorrection() {
   const [error, setError] = useState<string | null>(null);
   const [lastText, setLastText] = useState<string>("");
 
+  const [lastMission, setLastMission] = useState<Mission | null>(null);
+
   const submit = useCallback(
-    async (text: string) => {
+    async (text: string, mission?: Mission | null) => {
       if (!text.trim()) {
         toast.error(t("empty", uiLang));
         return;
       }
       setLastText(text);
+      setLastMission(mission ?? null);
       setLoading(true);
       setResult(null);
       setError(null);
@@ -41,6 +45,13 @@ export function useCorrection() {
           originalText: text,
           createdAt: now.toISOString(),
           updatedAt: now.toISOString(),
+          // Only set when a mission was active AND matches the language the
+          // AI actually detected — a mission assigned for English shouldn't
+          // silently "pass" a Korean entry it was never meant to judge.
+          mission:
+            mission && mission.language === r.language
+              ? { category: mission.category, passed: judgeMission(mission, r.changes) }
+              : undefined,
         };
         await saveEntry(entry);
         setResult(entry);
@@ -58,8 +69,8 @@ export function useCorrection() {
   );
 
   const retry = useCallback(() => {
-    if (lastText) void submit(lastText);
-  }, [lastText, submit]);
+    if (lastText) void submit(lastText, lastMission);
+  }, [lastText, lastMission, submit]);
 
   const reset = useCallback(() => {
     setError(null);
