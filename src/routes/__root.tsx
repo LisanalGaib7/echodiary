@@ -14,6 +14,7 @@ import { RootError } from "@/components/root/RootError";
 import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
 import { MobileHeader } from "@/components/root/MobileHeader";
 import { MobileTabBar } from "@/components/root/MobileTabBar";
+import { FeedbackFab } from "@/components/root/FeedbackFab";
 
 const SITE_URL = "https://echodiary-eng.vercel.app";
 const SITE_TITLE = "Echo — Bilingual diary correction";
@@ -99,6 +100,7 @@ function RootComponent() {
                 </main>
               </div>
               <MobileTabBar />
+              <FeedbackFab />
             </div>
           </EditorTypeProvider>
         </ExplainLangProvider>

@@ -9,6 +9,7 @@ import {
 import { useUiLang } from "@/lib/ui-lang";
 import { useExplainLang } from "@/lib/explain-lang";
 import { t, UI_LANGS, EXPLAIN_LANGS, type UiLang, type ExplainLang } from "@/lib/i18n";
+import { FeedbackForm } from "@/components/feedback/FeedbackForm";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -69,6 +70,16 @@ function SettingsPage() {
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground">{t("explainLanguageNote", uiLang)}</p>
+      </section>
+
+      <section className="journal-card space-y-4 p-6">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-primary/70">
+            {t("feedbackTitle", uiLang)}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("feedbackDesc", uiLang)}</p>
+        </div>
+        <FeedbackForm />
       </section>
     </div>
   );

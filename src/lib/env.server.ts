@@ -34,6 +34,12 @@ export const env = {
   get turnstileSecret() {
     return optional("TURNSTILE_SECRET");
   },
+  get telegramBotToken() {
+    return optional("TELEGRAM_BOT_TOKEN");
+  },
+  get telegramChatId() {
+    return optional("TELEGRAM_CHAT_ID");
+  },
   // Comma-separated list of allowed origins for AI endpoints.
   // Empty -> no origin check (dev only).
   get allowedOrigins(): string[] {
