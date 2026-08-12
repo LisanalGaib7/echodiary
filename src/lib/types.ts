@@ -36,4 +36,7 @@ export interface Entry extends CorrectionResult {
   originalText: string;
   createdAt: string;
   updatedAt: string;
+  /** Present only when a mission was active at write time. Judged
+   *  deterministically from `changes` — see src/lib/missions.ts. */
+  mission?: { category: string; passed: boolean };
 }

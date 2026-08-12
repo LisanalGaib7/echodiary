@@ -40,6 +40,9 @@ const EntrySchema = z.object({
     strengths: z.string(),
     improvements: z.string(),
   }),
+  // Optional and undeclared until now — zod silently strips unknown keys,
+  // so this must be added the same time Entry.mission is (Product Spec §6-3).
+  mission: z.object({ category: z.string(), passed: z.boolean() }).optional(),
 });
 
 const VocabSchema = z.object({

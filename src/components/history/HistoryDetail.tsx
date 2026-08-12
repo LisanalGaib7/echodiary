@@ -44,6 +44,7 @@ export function HistoryDetail({ entry, onBack, onDelete }: Props) {
         lang={entry.language}
         entryId={entry.id}
         entryDate={entry.date}
+        mission={entry.mission}
       />
     </div>
   );

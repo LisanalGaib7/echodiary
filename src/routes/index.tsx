@@ -5,12 +5,14 @@ import { Toaster } from "sonner";
 import { CorrectionView } from "@/components/CorrectionView";
 import { CorrectionSkeleton } from "@/components/CorrectionSkeleton";
 import { DiaryEditor } from "@/components/DiaryEditor";
+import { MissionCard } from "@/components/mission/MissionCard";
 import { useCorrection } from "@/hooks/useCorrection";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { Spinner } from "@/components/ui-common/Spinner";
 import { getAllEntries } from "@/lib/db";
 import { buildScoreTrend, buildWeeklyCategoryCounts } from "@/lib/insights";
+import { getTodayMission, isMissionSkippedToday } from "@/lib/missions";
 import type { Entry } from "@/lib/types";
 
 export const Route = createFileRoute("/")({
@@ -31,9 +33,14 @@ function WritePage() {
   const { loading, result, error, submit, retry } = useCorrection();
   const [entries, setEntries] = useState<Entry[]>([]);
 
-  // Recent entries power the score trend + "seen N times this week" badges below.
-  // Only needed once a correction lands, and re-fetched each time so a new entry
-  // (already saved by useCorrection before result is set) is reflected immediately.
+  // Loaded on mount (not just after a correction) so the mission card has
+  // history to draw from before the user's first submit of the session.
+  useEffect(() => {
+    getAllEntries().then(setEntries);
+  }, []);
+
+  // Re-fetched after each correction so trend/weeklyCounts/mission streak
+  // reflect the entry useCorrection already saved.
   useEffect(() => {
     if (!result) return;
     getAllEntries().then(setEntries);
@@ -46,6 +53,10 @@ function WritePage() {
   }, [entries, result]);
 
   const weeklyCounts = useMemo(() => buildWeeklyCategoryCounts(entries), [entries]);
+
+  const mission = useMemo(() => getTodayMission(entries), [entries]);
+  const [missionSkipped, setMissionSkipped] = useState(false);
+  useEffect(() => setMissionSkipped(isMissionSkippedToday()), []);
 
   return (
     <div className="space-y-16">
@@ -61,7 +72,13 @@ function WritePage() {
       </header>
 
       <div className="reveal" style={{ animationDelay: "180ms" }}>
-        <DiaryEditor loading={loading} onSubmit={submit} />
+        {mission && !missionSkipped && (
+          <MissionCard mission={mission} entries={entries} onSkip={() => setMissionSkipped(true)} />
+        )}
+        <DiaryEditor
+          loading={loading}
+          onSubmit={(text) => submit(text, missionSkipped ? null : mission)}
+        />
       </div>
 
       {loading && (
@@ -108,6 +125,7 @@ function WritePage() {
             weeklyCounts={weeklyCounts}
             entryId={result.id}
             entryDate={result.date}
+            mission={result.mission}
           />
         </div>
       )}
