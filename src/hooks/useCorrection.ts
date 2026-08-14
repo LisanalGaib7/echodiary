@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { track } from "@vercel/analytics";
 import { correctEntry } from "@/lib/correction.functions";
 import { saveEntry } from "@/lib/db";
 import { t } from "@/lib/i18n";
@@ -55,6 +56,10 @@ export function useCorrection() {
         };
         await saveEntry(entry);
         setResult(entry);
+        // The metric that actually answers "does anyone use this" — page
+        // views alone can't tell visiting apart from writing. Language code
+        // only; no diary text leaves the device for analytics.
+        track("correction_completed", { lang: r.language });
         toast.success(t("correctionSaved", uiLang));
       } catch (e) {
         console.error(e);

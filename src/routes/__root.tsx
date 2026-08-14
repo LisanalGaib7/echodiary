@@ -12,6 +12,7 @@ import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
 import { RootError } from "@/components/root/RootError";
 import { WeeklyGoal as WeeklySidebar } from "@/components/WeeklyGoal";
+import { Analytics } from "@vercel/analytics/react";
 import { MobileHeader } from "@/components/root/MobileHeader";
 import { MobileTabBar } from "@/components/root/MobileTabBar";
 
@@ -100,6 +101,9 @@ function RootComponent() {
               </div>
               <MobileTabBar />
             </div>
+            {/* Page views only — no diary content is ever sent. Custom
+                events (see useCorrection) carry a language code at most. */}
+            <Analytics />
           </EditorTypeProvider>
         </ExplainLangProvider>
       </UiLangProvider>
