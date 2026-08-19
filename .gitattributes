@@ -1,0 +1,19 @@
+# Store every text file with LF in the repository, and check it out as LF
+# everywhere — including Windows, where core.autocrlf=true would otherwise
+# hand prettier CRLF files it refuses to accept. Without `eol=lf`, `bun run
+# lint` reports thousands of "Delete ␍" errors that bury every real finding.
+* text=auto eol=lf
+
+# Binary assets: never touch these. `text=auto` already detects most of them,
+# but being explicit keeps a stray heuristic from corrupting an image.
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
