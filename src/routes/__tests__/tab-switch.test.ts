@@ -30,10 +30,7 @@ for (const c of cases) {
 }
 
 test("sidebar Nav links to every tab", () => {
-  const nav = readFileSync(
-    join(ROUTES_DIR, "..", "components", "root", "Nav.tsx"),
-    "utf8",
-  );
+  const nav = readFileSync(join(ROUTES_DIR, "..", "components", "root", "Nav.tsx"), "utf8");
   for (const c of cases) {
     expect(nav).toContain(`to="${c.path}"`);
   }
@@ -41,10 +38,7 @@ test("sidebar Nav links to every tab", () => {
 
 test("router and tab links preload route chunks on intent", () => {
   const router = readFileSync(join(ROUTES_DIR, "..", "router.tsx"), "utf8");
-  const nav = readFileSync(
-    join(ROUTES_DIR, "..", "components", "root", "Nav.tsx"),
-    "utf8",
-  );
+  const nav = readFileSync(join(ROUTES_DIR, "..", "components", "root", "Nav.tsx"), "utf8");
   const mobileTabBar = readFileSync(
     join(ROUTES_DIR, "..", "components", "root", "MobileTabBar.tsx"),
     "utf8",
