@@ -52,7 +52,10 @@ export function GoalEditor({ target, min, max, onSave }: Props) {
         {target}
       </span>
       <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-muted/60 transition-all group-hover:bg-muted">
-        <Pencil className="h-2.5 w-2.5 opacity-40 transition-opacity group-hover:opacity-100" strokeWidth={2} />
+        <Pencil
+          className="h-2.5 w-2.5 opacity-40 transition-opacity group-hover:opacity-100"
+          strokeWidth={2}
+        />
       </span>
     </button>
   );

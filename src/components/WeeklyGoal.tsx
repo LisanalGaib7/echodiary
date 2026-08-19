@@ -24,11 +24,7 @@ export function WeeklyGoal() {
           : `${remaining} more entries to complete your weekly cycle.`;
 
   const streakLabel =
-    uiLang === "ko"
-      ? `${streak}일 연속`
-      : streak === 1
-        ? "1 day streak"
-        : `${streak} days streak`;
+    uiLang === "ko" ? `${streak}일 연속` : streak === 1 ? "1 day streak" : `${streak} days streak`;
 
   return (
     <section aria-label={label} className="space-y-6 border-t border-primary/10 pt-8">
@@ -42,11 +38,24 @@ export function WeeklyGoal() {
             <GoalEditor target={target} min={minTarget} max={maxTarget} onSave={updateTarget} />
           </span>
           <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary tabular-nums">
-            {pct}% {complete ? (uiLang === "ko" ? "달성" : "reached") : uiLang === "ko" ? "진행" : "progress"}
+            {pct}%{" "}
+            {complete
+              ? uiLang === "ko"
+                ? "달성"
+                : "reached"
+              : uiLang === "ko"
+                ? "진행"
+                : "progress"}
           </span>
         </div>
 
-        <div className="flex gap-1.5" role="progressbar" aria-valuenow={done} aria-valuemin={0} aria-valuemax={target}>
+        <div
+          className="flex gap-1.5"
+          role="progressbar"
+          aria-valuenow={done}
+          aria-valuemin={0}
+          aria-valuemax={target}
+        >
           {Array.from({ length: target }).map((_, i) => (
             <span
               key={i}

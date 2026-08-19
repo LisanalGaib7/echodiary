@@ -25,7 +25,7 @@ export function StreakHeatmap({ dates, weeks = 14 }: Props) {
 
     const cursor = new Date(start);
     for (let w = 0; w < weeks; w++) {
-      const col: typeof cols[number] = [];
+      const col: (typeof cols)[number] = [];
       for (let d = 0; d < 7; d++) {
         const ymd = toYMD(cursor);
         col.push({

@@ -9,7 +9,9 @@ export function getGoal(): WeeklyGoal {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return JSON.parse(raw);
-  } catch {}
+  } catch {
+    // Corrupt or unreadable value — fall through to the default below.
+  }
   return { target: 3 };
 }
 
