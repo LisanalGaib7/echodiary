@@ -35,6 +35,7 @@ export function CorrectionView({
         entryId={entryId}
         entryDate={entryDate}
         language={lang}
+        changes={result.changes}
       />
       <ChangesTable
         changes={result.changes}

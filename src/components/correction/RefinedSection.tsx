@@ -1,6 +1,7 @@
-import type { Lang } from "@/lib/types";
+import type { Change, Lang } from "@/lib/types";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
+import { highlightRefined } from "@/lib/diff";
 import { SectionLabel } from "./SectionLabel";
 import { SaveSelectionPopover } from "./SaveSelectionPopover";
 
@@ -12,13 +13,28 @@ interface Props {
   entryId?: string;
   entryDate?: string;
   language?: Lang;
+  /** Used to highlight the corrected spans inside `text`. Omitted only
+   *  while a correction is still in flight. */
+  changes?: Change[];
 }
 
-export function RefinedSection({ text, entryId, entryDate, language }: Props) {
+export function RefinedSection({ text, entryId, entryDate, language, changes }: Props) {
   const { uiLang } = useUiLang();
+  const segs = highlightRefined(
+    text,
+    (changes ?? []).map((c) => c.refined),
+  );
   const body = (
     <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-serif text-[1.0625rem] leading-[1.7] text-ink">
-      {text}
+      {segs.map((seg, i) =>
+        seg.type === "ins" ? (
+          <ins key={i} className="rounded-[3px] bg-success/15 px-0.5 text-success no-underline">
+            {seg.text}
+          </ins>
+        ) : (
+          <span key={i}>{seg.text}</span>
+        ),
+      )}
     </p>
   );
   return (
