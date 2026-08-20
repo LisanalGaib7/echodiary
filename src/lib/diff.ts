@@ -3,6 +3,46 @@
 
 export type DiffSeg = { type: "same" | "del" | "ins"; text: string };
 
+/** Marks where each change's "refined" snippet landed inside the full refined
+ * paragraph, so the Refined section can highlight corrected spans without
+ * running its own diff against the original. Snippets are located in change
+ * order, searching forward from the previous match first (matches reading
+ * order) and falling back to a from-start search if that fails (AI-listed
+ * change order isn't guaranteed to match text order). A snippet that can't be
+ * found at all (e.g. the AI rewrote around it rather than quoting it
+ * verbatim) is simply skipped — no highlight for that change, no crash. */
+export function highlightRefined(refinedText: string, snippets: string[]): DiffSeg[] {
+  const ranges: Array<{ start: number; end: number }> = [];
+  let cursor = 0;
+  for (const snippet of snippets) {
+    if (!snippet) continue;
+    let idx = refinedText.indexOf(snippet, cursor);
+    if (idx === -1) idx = refinedText.indexOf(snippet);
+    if (idx === -1) continue;
+    ranges.push({ start: idx, end: idx + snippet.length });
+    cursor = idx + snippet.length;
+  }
+
+  ranges.sort((a, b) => a.start - b.start);
+  const merged: Array<{ start: number; end: number }> = [];
+  for (const r of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && r.start <= last.end) last.end = Math.max(last.end, r.end);
+    else merged.push({ ...r });
+  }
+
+  const segs: DiffSeg[] = [];
+  let pos = 0;
+  for (const r of merged) {
+    if (r.start > pos) segs.push({ type: "same", text: refinedText.slice(pos, r.start) });
+    segs.push({ type: "ins", text: refinedText.slice(r.start, r.end) });
+    pos = r.end;
+  }
+  if (pos < refinedText.length) segs.push({ type: "same", text: refinedText.slice(pos) });
+
+  return segs;
+}
+
 function tokenize(s: string): string[] {
   return s.match(/\S+|\s+/g) ?? [];
 }

@@ -14,7 +14,7 @@ export function DiffText({ original, refined }: { original: string; refined: str
             </del>
           );
         return (
-          <ins key={i} className="rounded-[3px] bg-primary/10 px-0.5 text-primary no-underline">
+          <ins key={i} className="rounded-[3px] bg-success/15 px-0.5 text-success no-underline">
             {seg.text}
           </ins>
         );
