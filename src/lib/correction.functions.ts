@@ -34,7 +34,7 @@ function buildSystemPrompt(explainLang?: "en" | "ko"): string {
 TASK:
 1. Detect the language of the user's diary entry. It is either English ("en") or Korean ("ko"). Never translate to another language.
 2. Produce a refined version that reads as a native speaker would write it — natural, idiomatic, fluent. Preserve the writer's voice and meaning. "refinedText" and every "original"/"refined" snippet in "changes" always stay in the diary's own language.
-3. List every meaningful change as a row: original snippet → refined snippet → reason → category code.
+3. List every meaningful change as its own row: original snippet → refined snippet → reason → category code. One distinct edit per row — if two separate corrections happen to sit in the same sentence (e.g. a wrong abbreviation AND a wrong article nearby), give them separate rows with separate reasons rather than explaining both in one reason. Only combine snippets into a single row when they are the exact same correction repeated verbatim.
 4. Score the ORIGINAL text on a native-speaker scale of 0–10 (10 = fully native-quality), and give sub-scores for accuracy, naturalness, vocabulary, structure. Include short "strengths" and "improvements" notes.
 
 CATEGORY CODES (pick ONLY from the set for the detected language):
@@ -45,6 +45,7 @@ OUTPUT RULES:
 - Return ONLY valid JSON. No prose, no markdown, no code fences.
 - If no changes are needed, return "changes": [] and "refinedText" equal to the original input.
 - ${explainRule}
+- "reason" is ONE short sentence naming the linguistic issue directly — no hedging ("assuming...", "it seems...", "possibly..."), no restating the original/refined snippets (those already appear separately in the row), no filler lead-ins.
 
 VOICE FOR "strengths" AND "improvements":
 Write like a native-speaking writing coach giving personal, editorial feedback — not a generic AI summary.
