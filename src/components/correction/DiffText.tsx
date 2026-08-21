@@ -4,7 +4,7 @@ import { wordDiff } from "@/lib/diff";
 export function DiffText({ original, refined }: { original: string; refined: string }) {
   const segs = wordDiff(original, refined);
   return (
-    <p className="max-w-[var(--measure)] whitespace-pre-wrap font-serif text-[1.0625rem] leading-[1.7] text-ink">
+    <p className="max-w-[var(--measure)] whitespace-pre-wrap font-content text-[1.0625rem] leading-[1.7] text-ink">
       {segs.map((seg, i) => {
         if (seg.type === "same") return <span key={i}>{seg.text}</span>;
         if (seg.type === "del")

@@ -8,6 +8,7 @@ import { formatLongDate } from "@/lib/format";
 import { Spinner } from "@/components/ui-common/Spinner";
 import { TypeScale } from "@/components/editor/TypeScale";
 import { TYPE_STEPS, useEditorType } from "@/lib/editor-type";
+import { useContentFont } from "@/lib/content-font";
 
 interface Props {
   loading: boolean;
@@ -29,10 +30,12 @@ function statusLabel(status: DraftStatus, savedAt: Date | null, uiLang: UiLang) 
 export function DiaryEditor({ loading, onSubmit }: Props) {
   const { uiLang } = useUiLang();
   const { typeStep } = useEditorType();
+  const { contentFontId } = useContentFont();
   const [text, setText] = useState("");
-  // metricsKey: font-size/line-height change the box's natural height even
-  // when `text` doesn't, so the grow hook needs to re-measure on it too.
-  const textareaRef = useAutoGrowTextarea(text, typeStep);
+  // metricsKey: font-size/line-height/font-family all change the box's
+  // natural height even when `text` doesn't, so the grow hook needs to
+  // re-measure whenever any of them changes too.
+  const textareaRef = useAutoGrowTextarea(text, `${typeStep}-${contentFontId}`);
   const [today, setToday] = useState("");
   const { initial, status, savedAt, restored, clear } = useDraft(text);
 
@@ -88,7 +91,7 @@ export function DiaryEditor({ loading, onSubmit }: Props) {
         onChange={(e) => setText(e.target.value)}
         placeholder={t("writePlaceholder", uiLang)}
         rows={6}
-        className="min-h-[16rem] w-full resize-none overflow-hidden bg-transparent font-serif text-ink outline-none [caret-color:var(--primary)] placeholder:text-primary/25 selection:bg-primary/10"
+        className="min-h-[16rem] w-full resize-none overflow-hidden bg-transparent font-content text-ink outline-none [caret-color:var(--primary)] placeholder:text-primary/25 selection:bg-primary/10"
         style={{
           maxWidth: "min(45ch, 100%)", // ~65 prose chars: ch is the "0" glyph, wider than average
           fontSize: `${TYPE_STEPS[typeStep].fontSize}px`,
