@@ -4,12 +4,20 @@ import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
 import { ProgressBar } from "@/components/ui-common/ProgressBar";
 
-export function LangReportCard({ r, title }: { r: LangReport; title: string }) {
+export function LangReportCard({
+  r,
+  title,
+  className,
+}: {
+  r: LangReport;
+  title: string;
+  className?: string;
+}) {
   const { uiLang } = useUiLang();
   const max = r.categories[0]?.count ?? 1;
 
   return (
-    <section className="journal-card p-6">
+    <section className={`journal-card p-6 ${className ?? ""}`}>
       <header className="mb-4 flex items-baseline justify-between">
         <h2 className="text-lg font-semibold">{title}</h2>
         <div className="text-xs text-muted-foreground">

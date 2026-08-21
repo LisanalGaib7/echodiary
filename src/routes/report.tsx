@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/ui-common/EmptyState";
 import { Spinner } from "@/components/ui-common/Spinner";
 
 type Period = "all" | "30d";
+type LangFilter = "all" | "en" | "ko";
 
 export const Route = createFileRoute("/report")({
   head: () => ({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/report")({
 function ReportPage() {
   const { uiLang } = useUiLang();
   const [period, setPeriod] = useState<Period>("all");
+  const [langFilter, setLangFilter] = useState<LangFilter>("all");
   const [reports, setReports] = useState<{ en: LangReport; ko: LangReport } | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +35,16 @@ function ReportPage() {
     try {
       const all = await getAllEntries();
       const filtered = filterByPeriod(all, period);
-      setReports({ en: buildReport(filtered, "en"), ko: buildReport(filtered, "ko") });
+      const en = buildReport(filtered, "en");
+      const ko = buildReport(filtered, "ko");
+      setReports({ en, ko });
+      // Default to whichever language has more entries, so a user who only
+      // writes in one language isn't shown a "0 entries" card by default.
+      // Only on the first generation — once the user (or a prior generate())
+      // has set a filter, respect it instead of silently overriding.
+      if (reports === null && en.entryCount !== ko.entryCount) {
+        setLangFilter(en.entryCount > ko.entryCount ? "en" : "ko");
+      }
     } finally {
       setLoading(false);
     }
@@ -44,6 +55,16 @@ function ReportPage() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-serif text-3xl font-semibold">{t("navReport", uiLang)}</h1>
         <div className="flex items-center gap-3">
+          <SegmentedControl<LangFilter>
+            size="md"
+            value={langFilter}
+            onChange={setLangFilter}
+            options={[
+              { value: "all", label: t("reportLangAll", uiLang) },
+              { value: "en", label: t("reportLangEn", uiLang) },
+              { value: "ko", label: t("reportLangKo", uiLang) },
+            ]}
+          />
           <SegmentedControl<Period>
             size="md"
             value={period}
@@ -83,8 +104,20 @@ function ReportPage() {
         />
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
-          <LangReportCard r={reports.en} title={t("english", uiLang)} />
-          <LangReportCard r={reports.ko} title={t("korean", uiLang)} />
+          {langFilter !== "ko" && (
+            <LangReportCard
+              r={reports.en}
+              title={t("english", uiLang)}
+              className={langFilter === "en" ? "lg:col-span-2" : undefined}
+            />
+          )}
+          {langFilter !== "en" && (
+            <LangReportCard
+              r={reports.ko}
+              title={t("korean", uiLang)}
+              className={langFilter === "ko" ? "lg:col-span-2" : undefined}
+            />
+          )}
         </div>
       )}
     </div>
