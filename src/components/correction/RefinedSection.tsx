@@ -1,7 +1,7 @@
-import type { Change, Lang } from "@/lib/types";
+import type { Lang } from "@/lib/types";
 import { useUiLang } from "@/lib/ui-lang";
 import { t } from "@/lib/i18n";
-import { highlightRefined } from "@/lib/diff";
+import { wordDiff } from "@/lib/diff";
 import { SectionLabel } from "./SectionLabel";
 import { SaveSelectionPopover } from "./SaveSelectionPopover";
 
@@ -13,17 +13,21 @@ interface Props {
   entryId?: string;
   entryDate?: string;
   language?: Lang;
-  /** Used to highlight the corrected spans inside `text`. Omitted only
-   *  while a correction is still in flight. */
-  changes?: Change[];
+  /** Diffed against `text` to highlight the corrected spans. Computed, not
+   *  taken from the AI's `changes` rows — those can omit or misattribute an
+   *  edit (see PR history), which silently hid changes the user never typed.
+   *  Omitted only while a correction is still in flight. */
+  originalText?: string;
 }
 
-export function RefinedSection({ text, entryId, entryDate, language, changes }: Props) {
+export function RefinedSection({ text, entryId, entryDate, language, originalText }: Props) {
   const { uiLang } = useUiLang();
-  const segs = highlightRefined(
-    text,
-    (changes ?? []).map((c) => c.refined),
-  );
+  // "del" segments are words present only in originalText — never rendered,
+  // since this paragraph shows refinedText only. What remains ("same" + "ins"
+  // in order) reconstructs refinedText exactly.
+  const segs = originalText
+    ? wordDiff(originalText, text).filter((s) => s.type !== "del")
+    : [{ type: "same" as const, text }];
   const body = (
     <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-content text-[1.0625rem] leading-[1.7] text-ink">
       {segs.map((seg, i) =>

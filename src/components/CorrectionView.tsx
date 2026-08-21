@@ -1,4 +1,4 @@
-import type { CorrectionResult, Entry, Lang } from "@/lib/types";
+import type { Entry, Lang } from "@/lib/types";
 import type { ScoreTrend } from "@/lib/insights";
 import { RefinedSection } from "./correction/RefinedSection";
 import { ChangesTable } from "./correction/ChangesTable";
@@ -6,7 +6,10 @@ import { OverallSection } from "./correction/OverallSection";
 import { MissionVerdict } from "./correction/MissionVerdict";
 
 interface Props {
-  result: CorrectionResult;
+  // Entry, not CorrectionResult: RefinedSection highlights what actually
+  // changed by diffing against originalText, so it needs the saved entry,
+  // not just the AI's raw response shape.
+  result: Entry;
   lang: Lang;
   /** Only available on the Write page, where recent entries are already on hand. */
   trend?: ScoreTrend;
@@ -32,10 +35,10 @@ export function CorrectionView({
       {mission && <MissionVerdict mission={mission} lang={lang} />}
       <RefinedSection
         text={result.refinedText}
+        originalText={result.originalText}
         entryId={entryId}
         entryDate={entryDate}
         language={lang}
-        changes={result.changes}
       />
       <ChangesTable
         changes={result.changes}
