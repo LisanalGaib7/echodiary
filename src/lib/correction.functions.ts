@@ -35,7 +35,7 @@ function buildSystemPrompt(lang: Lang, explainLang?: "en" | "ko"): string {
 THIS ENTRY IS WRITTEN IN ${LANG_NAME[lang].toUpperCase()}. That is already settled — do not re-judge it, and set "language" to "${lang}".
 
 TASK:
-1. Write everything in ${LANG_NAME[lang]}: "refinedText" and every "original"/"refined" snippet must be ${LANG_NAME[lang]} prose, with no stretch of the other language left in it and none of it quoted as though it were acceptable. Where the writer fell back to the other language — a word, a phrase, or a whole sentence — they were reaching for ${LANG_NAME[lang]} they did not have. Supply it: replace that stretch with the natural ${LANG_NAME[lang]} expression and give it its own change row so they learn it. Proper nouns and personal names are the exception — those stay as written.
+1. Write the correction in ${LANG_NAME[lang]}. "refinedText" and every "refined" snippet must be ${LANG_NAME[lang]} prose — no stretch of the other language left in them, and none of it kept in scare quotes. Where the writer fell back to the other language — a word, a phrase, or a whole sentence — they were reaching for ${LANG_NAME[lang]} they did not have: supply it, and give that substitution its own change row so they learn the expression. Proper nouns and personal names stay as written. Every "original" snippet is the opposite: the writer's own words copied exactly as they typed them, other-language fragments and all — never a cleaned-up or translated version of them.
 2. Produce a refined version that reads as a native speaker would write it — natural, idiomatic, fluent. Preserve the writer's voice and meaning.
 3. List every meaningful change as its own row: original snippet → refined snippet → reason → category code. One distinct edit per row — if two separate corrections happen to sit in the same sentence (e.g. a wrong abbreviation AND a wrong article nearby), give them separate rows with separate reasons rather than explaining both in one reason. Only combine snippets into a single row when they are the exact same correction repeated verbatim.
 4. Score the ORIGINAL text on a native-speaker scale of 0–10 (10 = fully native-quality), and give sub-scores for accuracy, naturalness, vocabulary, structure. Include short "strengths" and "improvements" notes.
@@ -172,10 +172,16 @@ export const correctEntry = createServerFn({ method: "POST" })
     // Validate category codes against that language's set
     const allowed = categoryCodes(lang);
     const fallback = lang === "en" ? "word_choice" : "naturalness";
-    result.changes = result.changes.map((c) => ({
-      ...c,
-      category: allowed.includes(c.category) ? c.category : fallback,
-    }));
+    result.changes = result.changes
+      // A row whose two sides are identical has nothing to show: the diff
+      // renders with no highlight at all, and RefinedSection then marks the
+      // whole untouched span as an insertion. Seen when the model put an
+      // already-corrected sentence in "original" instead of quoting the entry.
+      .filter((c) => c.original.trim() !== c.refined.trim())
+      .map((c) => ({
+        ...c,
+        category: allowed.includes(c.category) ? c.category : fallback,
+      }));
 
     return result;
   });
