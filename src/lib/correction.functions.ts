@@ -9,7 +9,8 @@ import { getAiModel } from "./ai-provider.server";
 import { assertAllowedOrigin } from "./security/origin.server";
 import { verifyTurnstile } from "./security/turnstile.server";
 import { categoryCodes } from "./categories";
-import type { CorrectionResult } from "./types";
+import { detectLanguage } from "./detect-language";
+import type { CorrectionResult, Lang } from "./types";
 
 const InputSchema = z.object({
   text: z.string().min(1).max(8000),
@@ -20,26 +21,27 @@ const InputSchema = z.object({
 const enCodes = categoryCodes("en").join(", ");
 const koCodes = categoryCodes("ko").join(", ");
 
-const EXPLAIN_LANG_NAME: Record<"en" | "ko", string> = { en: "English", ko: "Korean" };
+const LANG_NAME: Record<Lang, string> = { en: "English", ko: "Korean" };
 
-function buildSystemPrompt(explainLang?: "en" | "ko"): string {
+function buildSystemPrompt(lang: Lang, explainLang?: "en" | "ko"): string {
   // Default (no explainLang): explanatory text matches the diary's own
   // language, same as before this setting existed.
   const explainRule = explainLang
-    ? `"reason", "strengths", and "improvements" must be written in ${EXPLAIN_LANG_NAME[explainLang]}, regardless of the diary's language. Any quoted snippet inside them still stays in the diary's own language — translate the surrounding explanation, never the quote.`
+    ? `"reason", "strengths", and "improvements" must be written in ${LANG_NAME[explainLang]}, regardless of the diary's language. Any quoted snippet inside them still stays in the diary's own language — translate the surrounding explanation, never the quote.`
     : `"reason", "strengths", and "improvements" must be written in the SAME language as the diary.`;
 
   return `You are a strict but kind native-language diary editor.
 
+THIS ENTRY IS WRITTEN IN ${LANG_NAME[lang].toUpperCase()}. That is already settled — do not re-judge it, and set "language" to "${lang}".
+
 TASK:
-1. Detect the language of the user's diary entry. It is either English ("en") or Korean ("ko"). Never translate to another language.
-2. Produce a refined version that reads as a native speaker would write it — natural, idiomatic, fluent. Preserve the writer's voice and meaning. "refinedText" and every "original"/"refined" snippet in "changes" always stay in the diary's own language.
+1. Work in ${LANG_NAME[lang]} only. NEVER translate between English and Korean: "refinedText" and every "original"/"refined" snippet must be ${LANG_NAME[lang]} prose. Rewriting a sentence into the other language is always wrong, no matter how mixed the input looks — an entry can carry stray words or phrases from the other language and still be ${LANG_NAME[lang]}.
+2. Produce a refined version that reads as a native speaker would write it — natural, idiomatic, fluent. Preserve the writer's voice and meaning.
 3. List every meaningful change as its own row: original snippet → refined snippet → reason → category code. One distinct edit per row — if two separate corrections happen to sit in the same sentence (e.g. a wrong abbreviation AND a wrong article nearby), give them separate rows with separate reasons rather than explaining both in one reason. Only combine snippets into a single row when they are the exact same correction repeated verbatim.
 4. Score the ORIGINAL text on a native-speaker scale of 0–10 (10 = fully native-quality), and give sub-scores for accuracy, naturalness, vocabulary, structure. Include short "strengths" and "improvements" notes.
 
-CATEGORY CODES (pick ONLY from the set for the detected language):
-- English (en): ${enCodes}
-- Korean (ko): ${koCodes}
+CATEGORY CODES (pick ONLY from this set — the one for this entry's language):
+${lang === "en" ? `- English (en): ${enCodes}` : `- Korean (ko): ${koCodes}`}
 
 OUTPUT RULES:
 - Return ONLY valid JSON. No prose, no markdown, no code fences.
@@ -141,10 +143,13 @@ export const correctEntry = createServerFn({ method: "POST" })
       checkRateLimit(getClientIp(req));
     }
 
+    // Computed here, not left to the model: see src/lib/detect-language.ts.
+    const lang = detectLanguage(data.text);
+
     const model = getAiModel();
     const { text } = await generateText({
       model,
-      system: buildSystemPrompt(data.explainLang),
+      system: buildSystemPrompt(lang, data.explainLang),
       prompt: data.text,
     });
 
@@ -160,9 +165,13 @@ export const correctEntry = createServerFn({ method: "POST" })
 
     const result = ResultSchema.parse(parsed);
 
-    // Validate category codes against the detected language set
-    const allowed = categoryCodes(result.language);
-    const fallback = result.language === "en" ? "word_choice" : "naturalness";
+    // The language is ours, not the model's — it was told which one to use, so
+    // a differing "language" field is a mistake to discard, not a signal.
+    result.language = lang;
+
+    // Validate category codes against that language's set
+    const allowed = categoryCodes(lang);
+    const fallback = lang === "en" ? "word_choice" : "naturalness";
     result.changes = result.changes.map((c) => ({
       ...c,
       category: allowed.includes(c.category) ? c.category : fallback,
