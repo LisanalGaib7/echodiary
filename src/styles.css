@@ -9,6 +9,7 @@
   --font-serif: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
   --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-content: var(--content-font);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -48,6 +49,11 @@
      serif body and sans reason text (68ch is ~709px in Georgia/Fraunces but
      ~524px in system-ui), so this stays a fixed length, not a font-relative unit. */
   --measure: 44rem;
+  /* User-selectable body-copy face (Write, Refined, Changes diff, History) —
+     set by ContentFontProvider from src/lib/content-font.tsx. Deliberately
+     separate from --font-serif, which stays Fraunces for brand chrome
+     (logo, headers, category tags) regardless of this choice. */
+  --content-font: "Lora", Georgia, "Times New Roman", serif;
   /* Warm "journal paper" palette. Card and background carry the same faint
      warmth so the card reads as paper resting on a desk, not a cutout —
      matching the relationship .dark already has between its own two tokens. */

@@ -25,7 +25,7 @@ export function RefinedSection({ text, entryId, entryDate, language, changes }: 
     (changes ?? []).map((c) => c.refined),
   );
   const body = (
-    <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-serif text-[1.0625rem] leading-[1.7] text-ink">
+    <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-content text-[1.0625rem] leading-[1.7] text-ink">
       {segs.map((seg, i) =>
         seg.type === "ins" ? (
           <ins key={i} className="rounded-[3px] bg-success/15 px-0.5 text-success no-underline">

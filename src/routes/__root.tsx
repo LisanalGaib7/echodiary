@@ -7,6 +7,7 @@ import scrollbarCss from "../index.css?url";
 import { UiLangProvider } from "@/lib/ui-lang";
 import { ExplainLangProvider } from "@/lib/explain-lang";
 import { EditorTypeProvider } from "@/lib/editor-type";
+import { ContentFontProvider } from "@/lib/content-font";
 import { RootShell } from "@/components/root/RootShell";
 import { Nav } from "@/components/root/Nav";
 import { NotFound } from "@/components/root/NotFound";
@@ -52,7 +53,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Space+Mono:wght@400;700&display=swap",
       },
       { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
       { rel: "icon", href: "/favicon.ico", sizes: "any" },
@@ -86,24 +87,26 @@ function RootComponent() {
       <UiLangProvider>
         <ExplainLangProvider>
           <EditorTypeProvider>
-            <div className="min-h-screen">
-              <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-6 md:grid-cols-12 md:gap-16 md:py-16">
-                <aside className="hidden md:sticky md:top-16 md:col-span-3 md:block md:self-start">
-                  <Nav />
-                  <div className="mt-12">
-                    <WeeklySidebar />
-                  </div>
-                </aside>
-                <main className="min-w-0 pb-24 md:col-span-9 md:pb-0">
-                  <MobileHeader />
-                  <Outlet />
-                </main>
+            <ContentFontProvider>
+              <div className="min-h-screen">
+                <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 px-6 py-6 md:grid-cols-12 md:gap-16 md:py-16">
+                  <aside className="hidden md:sticky md:top-16 md:col-span-3 md:block md:self-start">
+                    <Nav />
+                    <div className="mt-12">
+                      <WeeklySidebar />
+                    </div>
+                  </aside>
+                  <main className="min-w-0 pb-24 md:col-span-9 md:pb-0">
+                    <MobileHeader />
+                    <Outlet />
+                  </main>
+                </div>
+                <MobileTabBar />
               </div>
-              <MobileTabBar />
-            </div>
-            {/* Page views only — no diary content is ever sent. Custom
-                events (see useCorrection) carry a language code at most. */}
-            <Analytics />
+              {/* Page views only — no diary content is ever sent. Custom
+                  events (see useCorrection) carry a language code at most. */}
+              <Analytics />
+            </ContentFontProvider>
           </EditorTypeProvider>
         </ExplainLangProvider>
       </UiLangProvider>

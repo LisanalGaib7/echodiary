@@ -111,6 +111,22 @@ export const STRINGS = {
     es: "Idioma de las explicaciones",
     fr: "Langue des explications",
   },
+  contentFont: {
+    en: "Body typeface",
+    ko: "본문 서체",
+    ja: "本文フォント",
+    zh: "正文字体",
+    es: "Tipografía del texto",
+    fr: "Police du texte",
+  },
+  contentFontDesc: {
+    en: "Choose the typeface used for your diary text, refined text, and change details.",
+    ko: "일기 본문·교정본·변경 내용에 사용할 서체를 선택하세요.",
+    ja: "日記本文・添削文・変更内容に使うフォントを選んでください。",
+    zh: "选择日记正文、润色文本和修改详情使用的字体。",
+    es: "Elige la tipografía para tu diario, el texto corregido y los detalles de cambios.",
+    fr: "Choisissez la police utilisée pour votre journal, le texte corrigé et le détail des changements.",
+  },
   explainLanguageDesc: {
     en: "Choose the language for reasons, strengths, and improvement notes. Your refined text and diff always stay in the diary's own language.",
     ko: "수정 이유·강점·개선점 해설에 사용할 언어를 선택하세요. 교정문과 변경 표시는 항상 일기 작성 언어로 유지됩니다.",

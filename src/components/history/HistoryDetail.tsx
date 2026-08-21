@@ -35,7 +35,7 @@ export function HistoryDetail({ entry, onBack, onDelete }: Props) {
           </button>
         </div>
         <SectionLabel>{t("original", uiLang)}</SectionLabel>
-        <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-serif text-[1.0625rem] leading-[1.7]">
+        <p className="mt-3 max-w-[var(--measure)] whitespace-pre-wrap font-content text-[1.0625rem] leading-[1.7]">
           {entry.originalText}
         </p>
       </div>
